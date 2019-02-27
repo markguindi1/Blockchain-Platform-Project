@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bcplatform.apps.BcplatformConfig',
+    'user_accounts.apps.UserAccountsConfig',
 ]
 
 MIDDLEWARE = [
