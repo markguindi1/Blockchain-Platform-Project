@@ -12,7 +12,7 @@ from bcplatform.models import *
 
 class UserCreate(CreateView):
     form_class = UserCreationForm
-    success_url = reverse_lazy("homepage:homepage")
+    success_url = reverse_lazy("bcplatform:homepage")
     template_name = "registration/register.html"
 
     def form_valid(self, form):
@@ -38,4 +38,6 @@ class UserCreate(CreateView):
 class ManageAccountView(LoginRequiredMixin, TemplateView):
     template_name = "registration/manage-account.html"
 
+class PasswordChangeDoneView(LoginRequiredMixin, TemplateView):
+    template_name = "registration/password-change-done.html"
 

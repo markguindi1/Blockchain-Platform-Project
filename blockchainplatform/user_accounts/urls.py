@@ -20,7 +20,9 @@ from . import views
 app_name = 'user_accounts'
 
 urlpatterns = [
-    path('', include('django.contrib.auth.urls')),
+    path('password_change/done/', views.PasswordChangeDoneView.as_view(), name="password_change_done"),
     path('manage/', views.ManageAccountView.as_view(), name="manage_account"),
     path('register/', views.UserCreate.as_view(), name="user_create"),
+    path('', include('django.contrib.auth.urls')),
+
 ]

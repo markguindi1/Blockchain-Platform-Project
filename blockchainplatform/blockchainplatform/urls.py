@@ -15,10 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path('', include('bcplatform.urls')),
     path('admin/', admin.site.urls),
     path('user/', include('user_accounts.urls')),
+
+    # In the admin files, the "password_change_done" view is linked to without an app namespace, so the entire url
+    # would be /password-change-done/ instead of /user/password-change-done/ (and the name of the url would be just
+    # password_change_done instead of user_accounts:password_change_done), so I needed to list that path here. The
+    # below path redirects it to the correct view in the user_accounts app.
+    path('password-change-done/', RedirectView.as_view(pattern_name="user_accounts:password_change_done"),
+         name="password_change_done"),
+
 ]
