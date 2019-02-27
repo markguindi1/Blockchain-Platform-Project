@@ -1,0 +1,21 @@
+
+
+{% extends 'application_manager/base.html' %}
+
+{% block body %}
+  <div class="container">
+    <br />
+    <form method="POST">
+      {% csrf_token %}
+
+        <table>
+          {{ form.as_table }}
+        </table>
+        <br />
+      <input type="submit" value="Login" class="btn btn-success btn-sm"/>
+      <a href="{% url 'homepage:homepage' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
+    </form>
+
+  </div>
+
+{% endblock %}
