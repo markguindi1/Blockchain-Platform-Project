@@ -105,4 +105,6 @@ venv.bak/
 
 # Our own files
 Icon?
+.idea/
+settings_secret.py
 
