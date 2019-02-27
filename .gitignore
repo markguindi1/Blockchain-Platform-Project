@@ -107,4 +107,5 @@ venv.bak/
 Icon?
 .idea/
 settings_secret.py
+.DS_Store
 
