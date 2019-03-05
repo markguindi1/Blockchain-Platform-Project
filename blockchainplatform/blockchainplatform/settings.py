@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-from .settings_secret import *
+from . import settings_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secret_key # from settings_secret.py
+SECRET_KEY = settings_secret.SECRET_KEY # from settings_secret.py
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'blockchainplatform.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': database_name, # from settings_secret.py
-        'USER': database_user, # from settings_secret.py
-        'PASSWORD': database_password, # from settings_secret.py
+        'NAME': settings_secret.DATABASE_NAME, # from settings_secret.py
+        'USER': settings_secret.DATABASE_USER, # from settings_secret.py
+        'PASSWORD': settings_secret.DATABASE_PASSWORD, # from settings_secret.py
         'HOST': '',   # Or an IP Address that your DB is hosted on
         'PORT': '5432',
         'ATOMIC_REQUESTS': True,
