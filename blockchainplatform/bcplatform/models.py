@@ -7,11 +7,19 @@ from django.contrib.auth.models import User
 class BlockchainUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return str(self.user)
+
+    def __repr__(self):
+        return repr(self.user)
+
     def get_own_blockchains(self):
         pass
 
     def get_other_blockchains(self):
         pass
+
+
 
 
 class Block(models.Model):
@@ -23,6 +31,12 @@ class Block(models.Model):
     hash = models.CharField(max_length=255, blank=True)
     chain = models.ForeignKey('Blockchain', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Block # {self.index}"
+
+    def __repr__(self):
+        return str(self)
+
     def generate_hash(self):
         pass
 
@@ -32,9 +46,15 @@ class Block(models.Model):
 
 class Blockchain(models.Model):
     name = models.CharField(max_length=255, blank=False)
-    admin = models.OneToOneField(BlockchainUser, on_delete=models.CASCADE, related_name='+')
-    members = models.ManyToManyField(BlockchainUser, related_name='+')
+    admin = models.ForeignKey(BlockchainUser, on_delete=models.CASCADE, related_name='blockchains')
+    members = models.ManyToManyField(BlockchainUser, related_name='other_blockchains')
     # Without related name^^, throws error
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def __repr__(self):
+        return str(self)
 
     def genesis_block(self):
         pass
@@ -54,6 +74,12 @@ class Blockchain(models.Model):
 
 class DuplicateBlockchain(Blockchain):
     latest_valid_block_index = models.IntegerField(blank=True)
+
+    def __str__(self):
+        return f"Blockchain {self.name}"
+
+    def __repr__(self):
+        return str(self)
 
     def init_from_blockchain(self, blockchain):
         pass
