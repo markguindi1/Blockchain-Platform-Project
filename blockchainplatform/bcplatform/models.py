@@ -23,12 +23,44 @@ class Block(models.Model):
     hash = models.CharField(max_length=255, blank=True)
     chain = models.ForeignKey('Blockchain', on_delete=models.CASCADE)
 
+    def generate_hash(self):
+        pass
+
+    def print_block(self):
+        pass
+
 
 class Blockchain(models.Model):
     name = models.CharField(max_length=255, blank=False)
     admin = models.OneToOneField(BlockchainUser, on_delete=models.CASCADE, related_name='+')
     members = models.ManyToManyField(BlockchainUser, related_name='+')
+    # Without related name^^, throws error
+
+    def genesis_block(self):
+        pass
+
+    def add_data(self, data):
+        pass
+
+    def is_chain_valid(self):
+        pass
+
+    def proof_of_work(self):
+        pass
+
+    def print_chain(self):
+        pass
 
 
+class DuplicateBlockchain(Blockchain):
+    latest_valid_block_index = models.IntegerField(blank=True)
 
+    def init_from_blockchain(self, blockchain):
+        pass
+
+    def alter_data(self, data, block_i):
+        pass
+
+    def recalculate_block_hashes(self):
+        pass
 
