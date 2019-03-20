@@ -23,5 +23,5 @@ app_name = 'bcplatform'
 urlpatterns = [
     path('', views.HomepageView.as_view(), name='homepage'),
     path('blockchain/', views.RedirectView.as_view(url=reverse_lazy("bcplatform:homepage"))),
-    path('blockchain/new/', views.HomepageView.as_view(), name='blockchain_new'),
+    path('blockchain/create/', views.BlockchainCreateView.as_view(), name='blockchain_create'),
 ]

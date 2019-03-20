@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import *
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse, reverse_lazy
 from .models import *
 
 # Create your views here.
@@ -18,3 +19,16 @@ class HomepageView(LoginRequiredMixin, TemplateView):
         context["own_blockchains"] = own_blockchains
         context["other_blockchains"] = other_blockchains
         return context
+
+class BlockchainCreateView(CreateView):
+    model = Blockchain
+    fields = ['name', 'members']
+    template_name = "bcplatform/blockchain_create_form.html"
+    # template_name_suffix = "_create_form"
+    success_url = reverse_lazy("bcplatform:homepage")
+
+    def form_valid(self, form):
+        # self.object = form.save(commit=False)
+        form.instance.admin = self.request.user.blockchainuser
+        return super().form_valid(form)
+
