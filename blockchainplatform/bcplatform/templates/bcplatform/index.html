@@ -14,9 +14,11 @@
           </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Blockchain name link goes here</td>
-            </tr>
+            {% for bc in own_blockchains %}
+              <tr>
+                <td><a href="#">{{ bc.name }}</a></td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -29,9 +31,11 @@
           </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Blockchain name link goes here</td>
-            </tr>
+            {% for bc in other_blockchains %}
+              <tr>
+                <td><a href="#">{{ bc.name }}</a></td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
