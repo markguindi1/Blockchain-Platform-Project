@@ -14,11 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from . import views
+from django.views.generic.base import RedirectView
 
 app_name = 'bcplatform'
 
 urlpatterns = [
     path('', views.HomepageView.as_view(), name='homepage'),
+    path('blockchain/', views.RedirectView.as_view(url=reverse_lazy("bcplatform:homepage"))),
+    path('blockchain/new/', views.HomepageView.as_view(), name='blockchain_new'),
 ]
