@@ -20,15 +20,16 @@ class HomepageView(LoginRequiredMixin, TemplateView):
         context["other_blockchains"] = other_blockchains
         return context
 
-class BlockchainCreateView(CreateView):
+
+class BlockchainCreateView(LoginRequiredMixin, CreateView):
     model = Blockchain
     fields = ['name', 'members']
     template_name = "bcplatform/blockchain_create_form.html"
     # template_name_suffix = "_create_form"
     success_url = reverse_lazy("bcplatform:homepage")
 
+    # Overridden to set the new blockchain's admin to the current user
     def form_valid(self, form):
-        # self.object = form.save(commit=False)
         form.instance.admin = self.request.user.blockchainuser
         return super().form_valid(form)
 
