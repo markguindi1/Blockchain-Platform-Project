@@ -8,10 +8,10 @@ class BlockchainUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.user)
+        return self.user.username
 
     def __repr__(self):
-        return repr(self.user)
+        return f"<BlockchainUser: {self.user.username}>"
 
     def get_own_blockchains(self):
         pass
