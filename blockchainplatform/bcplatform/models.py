@@ -47,7 +47,7 @@ class Block(models.Model):
 class Blockchain(models.Model):
     name = models.CharField(max_length=255, blank=False)
     admin = models.ForeignKey(BlockchainUser, on_delete=models.CASCADE, related_name='blockchains')
-    members = models.ManyToManyField(BlockchainUser, related_name='other_blockchains')
+    members = models.ManyToManyField(BlockchainUser, blank=True, related_name='other_blockchains')
     # Without related name^^, throws error
 
     def __str__(self):
