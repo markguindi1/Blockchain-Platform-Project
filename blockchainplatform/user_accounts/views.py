@@ -32,6 +32,8 @@ class UserCreate(CreateView):
         password=form.cleaned_data['password1']
         new_user = authenticate(username=username, password=password, )
         login(self.request, new_user)
+        bc_user = BlockchainUser(user=new_user)
+        bc_user.save()
         return valid
 
 
