@@ -28,6 +28,11 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
     # template_name_suffix = "_create_form"
     success_url = reverse_lazy("bcplatform:homepage")
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['members'].queryset = BlockchainUser.objects.exclude(user=self.request.user)
+        return form
+
     # Overridden to set the new blockchain's admin to the current user
     def form_valid(self, form):
         form.instance.admin = self.request.user.blockchainuser
