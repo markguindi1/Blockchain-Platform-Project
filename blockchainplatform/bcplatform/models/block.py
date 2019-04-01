@@ -22,5 +22,18 @@ class Block(models.Model):
         block_hash = sha256(block_header.encode())
         return block_hash.hexdigest()
 
+    def calculate_proof_of_work(self, difficulty=2):
+        self.nonce = 0
+        proof = self.generate_hash()
+        while not self.is_valid_proof(proof):
+            self.nonce += 1
+            proof = self.generate_hash()
+        self.hash = proof
+
+    @staticmethod
+    def is_valid_proof(proof, difficulty=2):
+        return proof[:difficulty] == '0'*difficulty
+
+
     def print_block(self):
         pass

@@ -1,5 +1,5 @@
 from django.db import models
-
+from .block import *
 
 class Blockchain(models.Model):
     name = models.CharField(max_length=255, blank=False)
@@ -14,19 +14,28 @@ class Blockchain(models.Model):
         return str(self)
 
     def genesis_block(self):
-
+        pass
 
     def add_data(self, data):
-        pass
         # Get hash of previous block
+        prev_block = self.get_previous_block()
+        previous_hash = prev_block.hash
+        previous_ind = prev_block.index
+
         # Create Block with hash of previous block
+        new_block = Block(
+            data=data,
+            index = previous_ind+1,
+            timestamp=datetime.datetime.now(),
+            previous_hash=previous_hash,
+            chain=self
+        )
         # Calculate proof of work
+        new_block.calculate_proof_of_work()
+        new_block.save()
 
     def is_chain_valid(self):
-        pass
 
-    def proof_of_work(self):
-        pass
 
     def print_chain(self):
         pass
@@ -36,3 +45,6 @@ class Blockchain(models.Model):
 
     def get_members(self):
         return self.members.all()
+
+    def get_previous_block(self):
+        self.get_blocks().last()
