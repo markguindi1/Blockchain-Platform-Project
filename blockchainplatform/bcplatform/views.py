@@ -4,6 +4,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from .models import *
 
+
+BC_FORM_FIELDS = ['name', 'members']
+
 # Create your views here.
 class HomepageView(LoginRequiredMixin, TemplateView):
     template_name = "bcplatform/index.html"
@@ -23,14 +26,14 @@ class HomepageView(LoginRequiredMixin, TemplateView):
 
 class BlockchainCreateView(LoginRequiredMixin, CreateView):
     model = Blockchain
-    fields = ['name', 'members']
-    template_name = "bcplatform/blockchain_create_form.html"
-    # template_name_suffix = "_create_form"
+    fields = BC_FORM_FIELDS
+    template_name = "bcplatform/blockchain_create_update_form.html"
     success_url = reverse_lazy("bcplatform:homepage")
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['members'].queryset = BlockchainUser.objects.exclude(user=self.request.user)
+        print(form.fields['members'].queryset)
+        form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
         return form
 
     # Overridden to set the new blockchain's admin to the current user
@@ -53,6 +56,17 @@ class BlockchainDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class BlockchainUpdateView(LoginRequiredMixin, UpdateView):
+    model = Blockchain
+    fields = BC_FORM_FIELDS
+    template_name = "bcplatform/blockchain_create_update_form.html"
+    success_url = reverse_lazy("bcplatform:homepage")
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
+        return form
 
 
-
+# class BlockchainDeleteView(LoginRequiredMixin, DeleteView):
+#     model = Blockchain
