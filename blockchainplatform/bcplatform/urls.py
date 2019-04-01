@@ -24,4 +24,5 @@ urlpatterns = [
     path('', views.HomepageView.as_view(), name='homepage'),
     path('blockchain/', views.RedirectView.as_view(url=reverse_lazy("bcplatform:homepage"))),
     path('blockchain/create/', views.BlockchainCreateView.as_view(), name='blockchain_create'),
+    path('blockchain/<int:pk>/', views.BlockchainDetailView.as_view(), name='blockchain_detail_view'),
 ]
