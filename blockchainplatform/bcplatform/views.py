@@ -2,12 +2,21 @@ from django.shortcuts import render
 from django.views.generic import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
+from django.http import HttpResponseForbidden
 from .models import *
 
 
 BC_FORM_FIELDS = ['name', 'members']
 
-# Create your views here.
+
+# Mixin for preventing user from editing a Blockchain for which they are not an admin
+class OwnerRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().admin != self.request.user.blockchainuser:
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
+
+
 class HomepageView(LoginRequiredMixin, TemplateView):
     template_name = "bcplatform/index.html"
 
@@ -44,7 +53,7 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
         return reverse("bcplatform:blockchain_detail_view", kwargs={'pk': self.object.pk})
 
 
-class BlockchainUpdateView(LoginRequiredMixin, UpdateView):
+class BlockchainUpdateView(OwnerRequiredMixin, LoginRequiredMixin, UpdateView):
     model = Blockchain
     fields = BC_FORM_FIELDS
     template_name = "bcplatform/blockchain_create_update_form.html"
@@ -72,7 +81,7 @@ class BlockchainDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class BlockchainDeleteView(LoginRequiredMixin, DeleteView):
+class BlockchainDeleteView(OwnerRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Blockchain
     template_name = "bcplatform/blockchain_delete_form.html"
     success_url = reverse_lazy("bcplatform:homepage")
