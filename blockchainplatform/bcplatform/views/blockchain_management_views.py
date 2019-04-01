@@ -1,35 +1,11 @@
-from django.shortcuts import render
 from django.views.generic import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.core.exceptions import PermissionDenied
-from .models import *
+from ..models import *
+from .util_views import *
 
 BC_FORM_FIELDS = ['name', 'members']
-
-
-# Mixin for preventing user from editing a Blockchain for which they are not an admin
-class OwnerRequiredMixin:
-    def dispatch(self, request, *args, **kwargs):
-        if self.get_object().admin != self.request.user.blockchainuser:
-            raise PermissionDenied("You don't have authorization to view this page.")
-        return super().dispatch(request, *args, **kwargs)
-
-
-class HomepageView(LoginRequiredMixin, TemplateView):
-    template_name = "bcplatform/index.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        blockchainuser = self.request.user.blockchainuser
-
-        own_blockchains = blockchainuser.blockchains.all()
-        other_blockchains = blockchainuser.other_blockchains.all()
-
-        context["own_blockchains"] = own_blockchains
-        context["other_blockchains"] = other_blockchains
-        return context
 
 
 class BlockchainCreateView(LoginRequiredMixin, CreateView):
@@ -84,4 +60,3 @@ class BlockchainDeleteView(OwnerRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Blockchain
     template_name = "bcplatform/blockchain_delete_form.html"
     success_url = reverse_lazy("bcplatform:homepage")
-
