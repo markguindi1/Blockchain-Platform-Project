@@ -12,3 +12,7 @@ class BlockCreateView(LoginRequiredMixin, CreateView):
     fields = BLOCK_FORM_FIELDS
     template_name = "bcplatform/blockchain_create_update_form.html"
 
+    # Overridden to set the new blockchain's admin to the current user
+    def form_valid(self, form):
+
+        return super().form_valid(form)
