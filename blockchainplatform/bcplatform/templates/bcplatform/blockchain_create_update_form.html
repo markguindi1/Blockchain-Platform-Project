@@ -10,7 +10,16 @@
         <form method="post">
           {% csrf_token %}
           {{ form.as_p }}
-          <input type="submit" value="Save" class="btn btn-success btn-sm">
+
+          {# If object doesn't exist, we're creating a new object. If it does exist, we're updating an existing object #}
+          {% if not object %}
+            <input type="submit" value="Save" class="btn btn-success btn-sm">
+            <a href="{% url 'bcplatform:homepage' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
+          {% else %}
+            <input type="submit" value="Update" class="btn btn-success btn-sm">
+            <a href="{% url 'bcplatform:blockchain_detail_view' object.pk %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
+          {% endif %}
+
         </form>
       </div>
 
