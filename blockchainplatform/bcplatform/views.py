@@ -59,8 +59,8 @@ class BlockchainUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class BlockchainDetailView(LoginRequiredMixin, DetailView):
-    template_name = "bcplatform/blockchain_detail_view.html"
     model = Blockchain
+    template_name = "bcplatform/blockchain_detail_view.html"
     context_object_name = "bc"
 
     def get_context_data(self, **kwargs):
@@ -72,5 +72,8 @@ class BlockchainDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-# class BlockchainDeleteView(LoginRequiredMixin, DeleteView):
-#     model = Blockchain
+class BlockchainDeleteView(LoginRequiredMixin, DeleteView):
+    model = Blockchain
+    template_name = "bcplatform/blockchain_delete_form.html"
+    success_url = reverse_lazy("bcplatform:homepage")
+

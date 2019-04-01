@@ -1,0 +1,33 @@
+
+{% extends 'bcplatform/base.html' %}
+
+{% block body %}
+
+  <div class="container">
+
+    <h3 class="text-center">{{ bc }}</h3>
+
+    <br />
+    <div class="row">
+      <form method="POST">
+      {% csrf_token %}
+      <br />
+
+      <p>
+        Are you sure you want to delete the following Blockchain?
+        <br />
+        <br />
+        {{ object.name }}
+      </p>
+
+      <br />
+
+      <input type="submit" value="Delete" class="btn btn-danger btn-sm"/>
+      <a href="{% url 'bcplatform:blockchain_detail_view' object.pk %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
+
+    </form>
+    </div>
+
+  </div>
+
+{% endblock %}
