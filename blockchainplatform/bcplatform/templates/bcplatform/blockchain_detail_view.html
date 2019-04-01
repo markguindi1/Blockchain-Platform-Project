@@ -4,45 +4,47 @@
 {% block body %}
 
   <div class="container">
-    <div class="row">
 
+    <h3 class="text-center">{{ bc }}</h3>
+
+    <br />
+    <div class="row">
       <div class="col-6">
         <table class="table table-striped">
           <thead>
           <tr>
-            <th scope="col">My Blockchains</th>
+            <th scope="col">Blockchain Members</th>
           </tr>
           </thead>
           <tbody>
-            {% for bc in own_blockchains %}
+            {% for member in bc_members %}
               <tr>
-                <td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>
+                <td>{{ member }}</td>
               </tr>
             {% empty %}
               <tr>
-                <td>No Blockchains</td>
+                <td>No Blockchain Members</td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
-        <a href="{% url 'bcplatform:blockchain_create' %}"><button type="button" class="btn btn-primary">Create Blockchain</button></a>
       </div>
 
-      <div class="col-6">
+      <div class="col-12">
         <table class="table table-striped">
           <thead>
           <tr>
-            <th scope="col">Other Blockchains</th>
+            <th scope="col">Blockchain Blocks</th>
           </tr>
           </thead>
           <tbody>
-            {% for bc in other_blockchains %}
+            {% for block in bc_blocks %}
               <tr>
-                <td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>
+                <td>{{ block }}</td>
               </tr>
             {% empty %}
               <tr>
-                <td>No Blockchains</td>
+                <td>No Blocks in Blockchain</td>
               </tr>
             {% endfor %}
           </tbody>

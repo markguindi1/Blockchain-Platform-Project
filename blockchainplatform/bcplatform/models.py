@@ -71,6 +71,12 @@ class Blockchain(models.Model):
     def print_chain(self):
         pass
 
+    def get_blocks(self):
+        return self.block_set.all().order_by('index')
+
+    def get_members(self):
+        return self.members.all()
+
 
 class DuplicateBlockchain(Blockchain):
     latest_valid_block_index = models.IntegerField(blank=True)

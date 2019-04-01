@@ -38,3 +38,21 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
         form.instance.admin = self.request.user.blockchainuser
         return super().form_valid(form)
 
+
+class BlockchainDetailView(LoginRequiredMixin, DetailView):
+    template_name = "bcplatform/blockchain_detail_view.html"
+    model = Blockchain
+    context_object_name = "bc"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        bc_blocks = self.object.get_blocks()
+        bc_members =  self.object.get_members()
+        context['bc_blocks'] = bc_blocks
+        context['bc_members'] = bc_members
+        return context
+
+
+
+
+
