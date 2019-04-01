@@ -1,0 +1,27 @@
+
+{% extends 'bcplatform/base.html' %}
+
+{% block body %}
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-6">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+
+            <input type="submit" value="Save" class="btn btn-success btn-sm">
+            <a href="{% url 'bcplatform:homepage' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
+
+        </form>
+      </div>
+
+      <div class="col-6">
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}
