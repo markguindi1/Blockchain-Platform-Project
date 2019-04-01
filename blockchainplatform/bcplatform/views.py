@@ -28,7 +28,6 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
     model = Blockchain
     fields = BC_FORM_FIELDS
     template_name = "bcplatform/blockchain_create_update_form.html"
-    success_url = reverse_lazy("bcplatform:homepage")
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -40,6 +39,23 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.admin = self.request.user.blockchainuser
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("bcplatform:blockchain_detail_view", kwargs={'pk': self.object.pk})
+
+
+class BlockchainUpdateView(LoginRequiredMixin, UpdateView):
+    model = Blockchain
+    fields = BC_FORM_FIELDS
+    template_name = "bcplatform/blockchain_create_update_form.html"
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
+        return form
+
+    def get_success_url(self):
+        return reverse("bcplatform:blockchain_detail_view", kwargs={'pk': self.object.pk})
 
 
 class BlockchainDetailView(LoginRequiredMixin, DetailView):
@@ -54,18 +70,6 @@ class BlockchainDetailView(LoginRequiredMixin, DetailView):
         context['bc_blocks'] = bc_blocks
         context['bc_members'] = bc_members
         return context
-
-
-class BlockchainUpdateView(LoginRequiredMixin, UpdateView):
-    model = Blockchain
-    fields = BC_FORM_FIELDS
-    template_name = "bcplatform/blockchain_create_update_form.html"
-    success_url = reverse_lazy("bcplatform:homepage")
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
-        return form
 
 
 # class BlockchainDeleteView(LoginRequiredMixin, DeleteView):
