@@ -22,10 +22,6 @@
               <tr>
                 <td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>
               </tr>
-            {% empty %}
-              <tr>
-                <td>No Blockchains</td>
-              </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -43,10 +39,6 @@
             {% for bc in other_blockchains %}
               <tr>
                 <td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td>No Blockchains</td>
               </tr>
             {% endfor %}
           </tbody>

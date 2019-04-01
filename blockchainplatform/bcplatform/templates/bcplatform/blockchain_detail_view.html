@@ -28,10 +28,6 @@
               <tr>
                 <td>{{ member }}</td>
               </tr>
-            {% empty %}
-              <tr>
-                <td>No Blockchain Members</td>
-              </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -48,10 +44,6 @@
             {% for block in bc_blocks %}
               <tr>
                 <td>{{ block }}</td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td>No Blocks in Blockchain</td>
               </tr>
             {% endfor %}
           </tbody>
