@@ -2,9 +2,8 @@ from django.shortcuts import render
 from django.views.generic import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from .models import *
-
 
 BC_FORM_FIELDS = ['name', 'members']
 
@@ -13,7 +12,7 @@ BC_FORM_FIELDS = ['name', 'members']
 class OwnerRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if self.get_object().admin != self.request.user.blockchainuser:
-            return HttpResponseForbidden()
+            raise PermissionDenied("You don't have authorization to view this page.")
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -75,7 +74,7 @@ class BlockchainDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         bc_blocks = self.object.get_blocks()
-        bc_members =  self.object.get_members()
+        bc_members = self.object.get_members()
         context['bc_blocks'] = bc_blocks
         context['bc_members'] = bc_members
         return context
