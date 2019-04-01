@@ -14,10 +14,13 @@ class Blockchain(models.Model):
         return str(self)
 
     def genesis_block(self):
-        pass
+
 
     def add_data(self, data):
         pass
+        # Get hash of previous block
+        # Create Block with hash of previous block
+        # Calculate proof of work
 
     def is_chain_valid(self):
         pass

@@ -15,7 +15,6 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        print(form.fields['members'].queryset)
         form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
         return form
 
