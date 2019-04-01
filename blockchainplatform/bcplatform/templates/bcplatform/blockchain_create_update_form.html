@@ -4,6 +4,12 @@
 {% block body %}
 
   <div class="container">
+
+    {% if object %}
+      <h3 class="text-center">{{ object }}</h3>
+      <br />
+    {% endif %}
+
     <div class="row">
 
       <div class="col-6">
