@@ -42,10 +42,34 @@
             </tr>
           </thead>
           <tbody>
-            {% for block in bc_blocks %}
+            {% for block in bc_blocks reversed %}
               <tr>
                 <th scope="row">{{ block.index }}</th>
-                <td>{{ block.data | truncatechars:25 }}</td>
+                <td>
+                  <!-- Nested Table for single Block-->
+                  <table class="table">
+                      <tr>
+                        <th scope="row">Hash:</th>
+                        <td>{{ block.hash }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Timestamp:</th>
+                        <td>{{ block.timestamp }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Data:</th>
+                        <td>{{ block.data }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Nonce:</th>
+                        <td>{{ block.nonce }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Previous Hash:</th>
+                        <td>{{ block.previous_hash }}</td>
+                      </tr>
+                  </table>
+                </td>
               </tr>
             {% endfor %}
           </tbody>
