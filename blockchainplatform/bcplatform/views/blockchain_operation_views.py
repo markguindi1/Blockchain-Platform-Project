@@ -8,7 +8,7 @@ from .util_views import *
 BLOCK_FORM_FIELDS = ['data']
 
 
-class BlockCreateView(LoginRequiredMixin, CreateView):
+class BlockCreateView(OwnerOrMemberRequiredMixin, LoginRequiredMixin, CreateView):
     model = Block
     fields = BLOCK_FORM_FIELDS
     template_name = "bcplatform/blockchain_create_update_form.html"
@@ -22,4 +22,9 @@ class BlockCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("bcplatform:blockchain_detail_view", kwargs={'pk': self.kwargs['bc_pk']})
+
+    def get_object(self, queryset=None):
+        chain_pk = self.kwargs['bc_pk']
+        return Blockchain.objects.get(pk=chain_pk)
+
 

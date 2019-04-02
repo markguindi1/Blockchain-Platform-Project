@@ -36,18 +36,22 @@
       <div class="col-12">
         <table class="table table-striped">
           <thead>
-          <tr>
-            <th scope="col">Blockchain Blocks</th>
-          </tr>
+            <tr>
+              <th scope="col">Block #</th>
+              <th scope="col">Block Data</th>
+            </tr>
           </thead>
           <tbody>
             {% for block in bc_blocks %}
               <tr>
-                <td>{{ block }}</td>
+                <th scope="row">{{ block.index }}</th>
+                <td>{{ block.data | truncatechars:25 }}</td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
+
+        <a href="{% url 'bcplatform:block_create_view' bc.pk %}"><button type="button" class="btn btn-primary btn-sm">Add Data</button></a>
       </div>
     </div>
 

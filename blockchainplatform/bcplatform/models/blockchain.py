@@ -19,7 +19,7 @@ class Blockchain(models.Model):
         if self.get_previous_block():
             return
         genesis_block = Block()
-        self.populate_block(genesis_block, data="")
+        self.populate_block(genesis_block, data="Genesis Block")
         genesis_block.save()
 
     def populate_block(self, block, data=None):
@@ -54,13 +54,13 @@ class Blockchain(models.Model):
         return self.get_blocks().last()
 
     def get_previous_block_hash(self):
-        prev_block = self.get_blocks().last()
+        prev_block = self.get_previous_block()
         if prev_block:
             return prev_block.hash
         return "0"
 
     def get_previous_block_index(self):
-        prev_block = self.get_blocks().last()
+        prev_block = self.get_previous_block()
         if prev_block:
             return prev_block.index
-        return 0
+        return -1
