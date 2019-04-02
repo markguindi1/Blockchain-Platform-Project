@@ -43,7 +43,7 @@ class BlockchainUpdateView(OwnerRequiredMixin, LoginRequiredMixin, UpdateView):
         return reverse("bcplatform:blockchain_detail_view", kwargs={'pk': self.object.pk})
 
 
-class BlockchainDetailView(LoginRequiredMixin, DetailView):
+class BlockchainDetailView(OwnerOrMemberRequiredMixin, LoginRequiredMixin, DetailView):
     model = Blockchain
     template_name = "bcplatform/blockchain_detail_view.html"
     context_object_name = "bc"
