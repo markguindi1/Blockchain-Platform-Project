@@ -1,6 +1,7 @@
 from django.db import models
 from .block import *
 
+
 class Blockchain(models.Model):
     name = models.CharField(max_length=255, blank=False)
     admin = models.ForeignKey('BlockchainUser', on_delete=models.CASCADE, related_name='blockchains')
@@ -13,29 +14,32 @@ class Blockchain(models.Model):
     def __repr__(self):
         return str(self)
 
-    def genesis_block(self):
-        pass
+    def create_genesis_block(self):
+        # If blocks already exist, do not create a genesis block
+        if self.get_previous_block():
+            return
+        genesis_block = Block()
+        self.populate_block(genesis_block, data="")
+        genesis_block.save()
 
-    def add_data(self, data):
-        # Get hash of previous block
-        prev_block = self.get_previous_block()
-        previous_hash = prev_block.hash
-        previous_ind = prev_block.index
+    def populate_block(self, block, data=None):
+        # Get hash & index of previous block
+        previous_hash = self.get_previous_block_hash()
+        previous_ind = self.get_previous_block_index()
 
-        # Create Block with hash of previous block
-        new_block = Block(
-            data=data,
-            index = previous_ind+1,
-            timestamp=datetime.datetime.now(),
-            previous_hash=previous_hash,
-            chain=self
-        )
+        # Set data attributes of block
+        if data:
+            block.data = data
+        block.index = previous_ind + 1
+        block.timestamp = datetime.datetime.now()
+        block.previous_hash = previous_hash
+        block.chain = self
+
         # Calculate proof of work
-        new_block.calculate_proof_of_work()
-        new_block.save()
+        block.calculate_proof_of_work()
 
     def is_chain_valid(self):
-
+        pass
 
     def print_chain(self):
         pass
@@ -47,4 +51,16 @@ class Blockchain(models.Model):
         return self.members.all()
 
     def get_previous_block(self):
-        self.get_blocks().last()
+        return self.get_blocks().last()
+
+    def get_previous_block_hash(self):
+        prev_block = self.get_blocks().last()
+        if prev_block:
+            return prev_block.hash
+        return "0"
+
+    def get_previous_block_index(self):
+        prev_block = self.get_blocks().last()
+        if prev_block:
+            return prev_block.index
+        return 0
