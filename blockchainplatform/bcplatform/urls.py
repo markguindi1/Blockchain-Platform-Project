@@ -25,4 +25,5 @@ urlpatterns = [
     path('blockchain/<int:pk>/', views.BlockchainDetailView.as_view(), name='blockchain_detail_view'),
     path('blockchain/<int:pk>/update/', views.BlockchainUpdateView.as_view(), name='blockchain_update_view'),
     path('blockchain/<int:pk>/delete/', views.BlockchainDeleteView.as_view(), name='blockchain_delete_view'),
+    path('blockchain/<int:bc_pk>/create-block/', views.BlockCreateView.as_view(), name='block_create_view'),
 ]

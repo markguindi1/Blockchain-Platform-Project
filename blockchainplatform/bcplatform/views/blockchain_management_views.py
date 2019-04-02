@@ -21,7 +21,9 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
     # Overridden to set the new blockchain's admin to the current user
     def form_valid(self, form):
         form.instance.admin = self.request.user.blockchainuser
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        form.instance.create_genesis_block()
+        return response
 
     def get_success_url(self):
         return reverse("bcplatform:blockchain_detail_view", kwargs={'pk': self.object.pk})
