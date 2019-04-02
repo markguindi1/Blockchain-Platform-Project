@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+import pytz
 from .block import *
 
 
@@ -31,7 +33,7 @@ class Blockchain(models.Model):
         if data:
             block.data = data
         block.index = previous_ind + 1
-        block.timestamp = datetime.datetime.now()
+        block.timestamp = timezone.now()
         block.previous_hash = previous_hash
         block.chain = self
 
