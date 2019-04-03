@@ -1,7 +1,7 @@
 from django.views.generic import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.core.exceptions import PermissionDenied
+from django import forms
 from ..models import *
 from .util_views import *
 
@@ -15,6 +15,7 @@ class BlockchainCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+        form.fields['members'].widget = forms.CheckboxSelectMultiple()
         form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
         return form
 
@@ -36,6 +37,7 @@ class BlockchainUpdateView(OwnerRequiredMixin, LoginRequiredMixin, UpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+        form.fields['members'].widget = forms.CheckboxSelectMultiple()
         form.fields['members'].queryset = form.fields['members'].queryset.exclude(user=self.request.user)
         return form
 
