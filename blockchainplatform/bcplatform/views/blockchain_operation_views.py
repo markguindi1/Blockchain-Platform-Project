@@ -12,7 +12,16 @@ class BlockCreateView(OwnerOrMemberRequiredMixin, LoginRequiredMixin, CreateView
     """This view allows a user to add data to a blockchain. Handles both the GET and POST"""
     model = Block
     fields = BLOCK_FORM_FIELDS
-    template_name = "bcplatform/blockchain_create_update_form.html"
+    template_name = "bcplatform/block_create_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        bc = self.get_object()
+        newcontext = {
+            'bc': bc,
+        }
+        context['bc'] = bc
+        return context
 
     def form_valid(self, form):
         chain_pk = self.kwargs['bc_pk']
