@@ -4,11 +4,14 @@ import pytz
 from .block import *
 
 
-class Blockchain(models.Model):
+class AbstractBlockchain(models.Model):
     name = models.CharField(max_length=255, blank=False)
     admin = models.ForeignKey('BlockchainUser', on_delete=models.CASCADE, related_name='blockchains')
     members = models.ManyToManyField('BlockchainUser', blank=True, related_name='other_blockchains')
     # Without related name^^, throws error
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return f"{self.name}"
@@ -66,3 +69,32 @@ class Blockchain(models.Model):
         if prev_block:
             return prev_block.index
         return -1
+
+
+class Blockchain(AbstractBlockchain):
+    pass
+
+
+class DuplicateBlockchain(AbstractBlockchain):
+    admin = models.ForeignKey('BlockchainUser', on_delete=models.CASCADE, related_name='dup_blockchains')
+    members = models.ManyToManyField('BlockchainUser', blank=True, related_name='dup_other_blockchains')
+
+    latest_valid_block_index = models.IntegerField(blank=True)
+
+    def __str__(self):
+        return f"Blockchain {self.name}"
+
+    def __repr__(self):
+        return str(self)
+
+    def init_from_blockchain(self, blockchain_id):
+        pass
+
+    def copy_block(self, block, new_data=None):
+        pass
+
+    def alter_data(self, data, block_i):
+        pass
+
+    def recalculate_block_hashes(self):
+        pass
