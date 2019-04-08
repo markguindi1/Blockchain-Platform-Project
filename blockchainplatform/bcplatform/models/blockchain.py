@@ -72,29 +72,68 @@ class AbstractBlockchain(models.Model):
 
 
 class Blockchain(AbstractBlockchain):
-    pass
-
-
-class DuplicateBlockchain(AbstractBlockchain):
-    admin = models.ForeignKey('BlockchainUser', on_delete=models.CASCADE, related_name='dup_blockchains')
-    members = models.ManyToManyField('BlockchainUser', blank=True, related_name='dup_other_blockchains')
-
-    latest_valid_block_index = models.IntegerField(blank=True)
 
     def __str__(self):
         return f"Blockchain {self.name}"
 
     def __repr__(self):
-        return str(self)
+        return f"<{str(self)}>"
+
+
+class DuplicateBlockchain(AbstractBlockchain):
+    admin = models.ForeignKey('BlockchainUser', on_delete=models.CASCADE, related_name='dup_blockchains')
+    members = models.ManyToManyField('BlockchainUser', blank=True, related_name='dup_other_blockchains')
+    creation_time = models.DateTimeField(null=True)
+    original_blockchain = models.ForeignKey('Blockchain', on_delete=models.CASCADE)
+    first_invalid_block_index = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"DuplicateBlockchain {self.name}"
+
+    def __repr__(self):
+        return f"<{str(self)}>"
+
+    # Overriden to get duplicate blocks
+    def get_blocks(self):
+        return self.duplicateblock_set.all().order_by('index')
 
     def init_from_blockchain(self, blockchain_id):
-        pass
+        self.original_blockchain = Blockchain.objects.get(pk=blockchain_id)
+        self.name = self.original_blockchain.name
+        self.admin = self.original_blockchain.admin
+        self.save()
+        self.members.set(self.original_blockchain.get_members())
+        self.creation_time = timezone.now()
+        self.save()
 
-    def copy_block(self, block, new_data=None):
-        pass
+        self.add_blocks_from_original_blockchain()
+
+    def add_blocks_from_original_blockchain(self):
+        original_blocks = self.original_blockchain.get_blocks()
+
+        for orig_block in original_blocks:
+            self.add_copy_of_block(orig_block.id)
+
+    def add_copy_of_block(self, block_id):
+        new_dup_block = DuplicateBlock()
+        new_dup_block.populate_from_block(block_id)
+        new_dup_block.chain = self
+        new_dup_block.save()
 
     def alter_data(self, data, block_i):
-        pass
+        blocks = self.get_blocks()
 
-    def recalculate_block_hashes(self):
+        for block in blocks:
+            if block.index < block_i:
+                continue
+            if block.index == block_i:
+                block.data = data
+                block.nonce = 0
+                block.hash = block.generate_hash()
+                block.save()
+                self.first_invalid_block_index = block_i
+                self.save()
+                return
+
+    def recalculate_block_hashes(self, start_block_i):
         pass
