@@ -1,0 +1,79 @@
+
+{% extends 'bcplatform/base.html' %}
+
+{% block body %}
+
+  <div class="container">
+
+    <h3 class="text-center">{{ bc }}</h3>
+    <br />
+
+    {% if bc.admin == request.user.blockchainuser %}
+      <a href="{% url 'bcplatform:blockchain_update_view' bc.pk %}"><button type="button" class="btn btn-primary btn-sm">Update Blockchain</button></a>
+      <a href="{% url 'bcplatform:blockchain_delete_view' bc.pk %}"><button type="button" class="btn btn-danger btn-sm">Delete Blockchain</button></a>
+      <br />
+    {% endif %}
+
+    <br />
+    <div class="row">
+
+      <div class="col-12">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Block #</th>
+              <th scope="col">Block Data</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for block in bc_blocks reversed %}
+              <form method="post">{% csrf_token %}
+
+                <input name="block_id" type="number" value="{{ block.pk }}" hidden>
+                <tr>
+                  <th scope="row">{{ block.index }}</th>
+
+                  <td>
+                    <!-- Nested Table for single Block-->
+                    <table class="table">
+                        <tr>
+                          <th scope="row">Hash:</th>
+                          <td>{{ block.hash }}</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Timestamp:</th>
+                          <td>{{ block.timestamp }}</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Data:</th>
+                          <!--<td>{{ block.data }}</td>-->
+                          <td><textarea name="new_data" rows="4" style="width: 100%; overflow-y: scroll;" disabled>{{ block.data }}</textarea></td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Nonce:</th>
+                          <td>{{ block.nonce }}</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Previous Hash:</th>
+                          <td>{{ block.previous_hash }}</td>
+                        </tr>
+                    </table>
+                  </td>
+
+                  <td>
+                    <input type="submit" value="Submit Changed Data">
+                  </td>
+                </tr>
+              </form>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <a href="{% url 'bcplatform:block_create_view' bc.pk %}"><button type="button" class="btn btn-primary btn-sm">Add Data</button></a>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}
