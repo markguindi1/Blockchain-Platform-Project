@@ -5,6 +5,9 @@
 
   <div class="container">
 
+    <h3 class="text-center">{{ bc }}</h3>
+    <br />
+
     <div class="row">
 
       <div class="col-6">
@@ -13,7 +16,7 @@
           {{ form.as_p }}
 
             <input type="submit" value="Save" class="btn btn-success btn-sm">
-            <a href="{% url 'bcplatform:homepage' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
+            <a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}"><button type="button" class="btn btn-secondary btn-sm">Cancel </button></a>
 
         </form>
       </div>
