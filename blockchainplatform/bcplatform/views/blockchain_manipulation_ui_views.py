@@ -10,7 +10,7 @@ from .util_views import *
 class BlockchainCorruptFormView(LoginRequiredMixin, View):
 
     template_name = "bcplatform/blockchain_corrupt_form_view.html"
-    success_url = reverse_lazy("bcplatform:homepage")
+    # success_url = reverse_lazy("bcplatform:homepage")
 
     def get(self, request, *args, **kwargs):
         """
@@ -45,7 +45,15 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
         dup_bc.alter_data(new_data, block_index)
 
         # Redirect to homepage
-        return redirect(self.success_url)
+        redirect_url = self.get_success_url(dup_bc.pk)
+        return redirect(redirect_url)
+
+    def get_success_url(self, dup_bc_pk):
+        url_kwargs = {
+            'bc_pk': self.kwargs['bc_pk'],
+            'corrupt_bc_pk': dup_bc_pk
+        }
+        return reverse("bcplatform:blockchain_corrupted_view", kwargs=url_kwargs)
 
     def get_blockchain(self, bc_pk):
         return Blockchain.objects.get(pk=bc_pk)
@@ -53,4 +61,22 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
     def get_object(self):
         bc_pk = self.kwargs['bc_pk']
         return self.get_blockchain(bc_pk)
+
+
+class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
+    template_name = "bcplatform/blockchain_corrupted_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        corrupt_bc_pk = self.kwargs['corrupt_bc_pk']
+        corrupt_bc = DuplicateBlockchain.objects.get(pk=corrupt_bc_pk)
+
+        corrupt_bc_blocks = corrupt_bc.get_blocks()
+
+        context['bc'] = corrupt_bc
+        context['bc_blocks'] = corrupt_bc_blocks
+
+        return context
+
 
