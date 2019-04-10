@@ -4,7 +4,7 @@
 {% block body %}
 
   {% load static %}
-  <link rel="stylesheet" type="text/css" href="{% static 'bcplatform/style.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'bcplatform/css/style.css' %}">
 
   <div class="container">
 
@@ -54,10 +54,10 @@
                 <th scope="row">{{ block.index }}</th>
                 <td>
                   <!-- Nested Table for single Block-->
-                  <table class="table">
+                  <table class="table" block="{{ block.index }}">
                       <tr>
                         <th scope="row">Hash:</th>
-                        <td>{{ block.hash }}</td>
+                        <td class="hash">{{ block.hash }}</td>
                       </tr>
                       <tr>
                         <th scope="row">Timestamp:</th>
@@ -74,7 +74,7 @@
                       </tr>
                       <tr>
                         <th scope="row">Previous Hash:</th>
-                        <td>{{ block.previous_hash }}</td>
+                        <td class=prev-hash">{{ block.previous_hash }}</td>
                       </tr>
                   </table>
                 </td>
@@ -88,5 +88,7 @@
     </div>
 
   </div>
+
+  <script src="{% static 'bcplatform/js/script.js' %}"></script>
 
 {% endblock %}
