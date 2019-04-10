@@ -13,6 +13,9 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
     success_url = reverse_lazy("bcplatform:homepage")
 
     def get(self, request, *args, **kwargs):
+        """
+        This method handles getting the template for allowing the user to submit altered data
+        """
         bc_pk = kwargs['bc_pk']
         bc = self.get_blockchain(bc_pk)
         bc_blocks = bc.get_blocks()
@@ -23,7 +26,10 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-
+        """
+        This method handles getting the block that the user altered the data of, as well as the altered data itself. It
+        then creates a duplicate blockchain
+        """
         block_id = int(request.POST['block_id'])
         block = Block.objects.get(pk=block_id)
         block_index = block.index
