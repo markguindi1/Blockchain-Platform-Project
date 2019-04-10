@@ -17,9 +17,6 @@ class BlockCreateView(OwnerOrMemberRequiredMixin, LoginRequiredMixin, CreateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         bc = self.get_object()
-        newcontext = {
-            'bc': bc,
-        }
         context['bc'] = bc
         return context
 
