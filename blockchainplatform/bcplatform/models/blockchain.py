@@ -129,7 +129,8 @@ class DuplicateBlockchain(AbstractBlockchain):
             if block.index == block_i:
                 block.data = data
                 block.nonce = 0
-                block.hash = block.generate_hash()
+                # block.hash = block.generate_hash()
+                block.calculate_proof_of_work()
                 block.save()
                 self.first_invalid_block_index = block_i
                 self.save()
