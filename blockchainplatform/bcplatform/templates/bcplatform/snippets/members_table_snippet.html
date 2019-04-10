@@ -1,0 +1,15 @@
+
+<table class="table table-striped table-bordered">
+  <thead>
+  <tr>
+    <th scope="col">Blockchain Members</th>
+  </tr>
+  </thead>
+  <tbody>
+    {% for member in bc_members %}
+      <tr>
+        <td>{{ member }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
