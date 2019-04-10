@@ -1,0 +1,25 @@
+
+{% extends 'base.html' %}
+
+{% block body %}
+
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'bcplatform/css/style.css' %}">
+
+  <div class="container">
+
+    <h3 class="text-center">{{ bc }}</h3>
+    <br />
+    <br />
+
+    <div class="row">
+      <div class="col-12 bottom-table-container">
+        {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
+        <a href="#"><button type="button" class="btn btn-primary btn-sm">Placeholder for Reconcile</button></a>
+        <a href="#"><button type="button" class="btn btn-secondary btn-sm">Placeholder for 51% Attack</button></a>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}
