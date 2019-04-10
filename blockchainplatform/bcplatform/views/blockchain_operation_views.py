@@ -26,7 +26,7 @@ class BlockCreateView(OwnerOrMemberRequiredMixin, LoginRequiredMixin, CreateView
     def form_valid(self, form):
         chain_pk = self.kwargs['bc_pk']
         bc = Blockchain.objects.get(pk=chain_pk)
-        # Populates the newly create block object with data which the backend handles, such as the timestamp, hash,
+        # Populates the newly created block object with data which the backend handles, such as the timestamp, hash,
         # previous_hash, index, etc. form.instance is the newly create block.
         bc.populate_block(form.instance)
         return super().form_valid(form)
