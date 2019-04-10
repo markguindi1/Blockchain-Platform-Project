@@ -28,6 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Uncomment for DEBUG = False
+
+DEBUG = False
+ALLOWED_HOSTS = ['*']
+
+
 
 # Application definition
 
