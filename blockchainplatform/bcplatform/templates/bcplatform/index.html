@@ -11,38 +11,16 @@
     <div class="row">
 
       <div class="col-6">
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th scope="col">My Blockchains</th>
-          </tr>
-          </thead>
-          <tbody>
-            {% for bc in own_blockchains %}
-              <tr>
-                <td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        {% with table_title="My Blockchains" blockchains=own_blockchains %}
+          {% include 'bcplatform/snippets/blockchain_list_table_snippet.html' %}
+        {% endwith %}
         <a href="{% url 'bcplatform:blockchain_create' %}"><button type="button" class="btn btn-primary">Create Blockchain</button></a>
       </div>
 
       <div class="col-6">
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th scope="col">Other Blockchains</th>
-          </tr>
-          </thead>
-          <tbody>
-            {% for bc in other_blockchains %}
-              <tr>
-                <td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        {% with table_title="Other Blockchains" blockchains=other_blockchains %}
+          {% include 'bcplatform/snippets/blockchain_list_table_snippet.html' %}
+        {% endwith %}
       </div>
     </div>
 
