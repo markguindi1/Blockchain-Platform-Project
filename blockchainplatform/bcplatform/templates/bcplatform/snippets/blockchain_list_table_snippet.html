@@ -1,0 +1,15 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">{{ table_title }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bc in blockchains %}
+            <tr>
+                <!--<td><a href="{% url 'bcplatform:blockchain_detail_view' bc.pk %}">{{ bc.name }}</a></td>-->
+                <td><a href="{{ bc.get_absolute_url }}">{{ bc.name }}</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
