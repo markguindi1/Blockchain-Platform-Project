@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
 import pytz
 from .block import *
 
@@ -79,6 +80,12 @@ class Blockchain(AbstractBlockchain):
     def __repr__(self):
         return f"<{str(self)}>"
 
+    def get_absolute_url(self):
+        url_kwargs = {
+            'pk': str(self.pk)
+        }
+        return reverse("bcplatform:blockchain_detail_view", kwargs=url_kwargs)
+
 
 class DuplicateBlockchain(AbstractBlockchain):
     admin = models.ForeignKey('BlockchainUser', on_delete=models.CASCADE, related_name='dup_blockchains')
@@ -92,6 +99,13 @@ class DuplicateBlockchain(AbstractBlockchain):
 
     def __repr__(self):
         return f"<{str(self)}>"
+
+    def get_absolute_url(self):
+        url_kwargs = {
+            'bc_pk': str(self.original_blockchain.pk),
+            'corrupt_bc_pk': str(self.pk)
+        }
+        return reverse("bcplatform:blockchain_corrupted_view", kwargs=url_kwargs)
 
     # Overriden to get duplicate blocks
     def get_blocks(self):
