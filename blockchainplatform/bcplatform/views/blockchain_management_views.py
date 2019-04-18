@@ -92,8 +92,10 @@ class BlockchainDetailView(OwnerOrMemberRequiredMixin, LoginRequiredMixin, Detai
         context = super().get_context_data(**kwargs)
         bc_blocks = self.object.get_blocks()
         bc_members = self.object.get_members()
+        bc_duplicates = self.object.duplicateblockchain_set.all()
         context['bc_blocks'] = bc_blocks
         context['bc_members'] = bc_members
+        context['bc_duplicates'] = bc_duplicates
         return context
 
 
