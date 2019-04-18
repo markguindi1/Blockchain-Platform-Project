@@ -26,6 +26,15 @@
         {% include 'bcplatform/snippets/members_table_snippet.html' %}
       </div>
 
+      {% comment %}
+      {# Uncomment this block to render a list of DuplicateBlockchains #}
+      <div class="col-6">
+        {% with table_title="Duplicate Blockchains" blockchains=bc_duplicates %}
+          {% include 'bcplatform/snippets/blockchain_list_table_snippet.html' %}
+        {% endwith %}
+      </div>
+      {% endcomment %}
+
       <div class="col-12 bottom-table-container">
         <a href="{% url 'bcplatform:block_create_view' bc.pk %}"><button type="button" class="btn btn-primary btn-sm" style="margin-bottom: 20px;">Add Data</button></a>
         {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
