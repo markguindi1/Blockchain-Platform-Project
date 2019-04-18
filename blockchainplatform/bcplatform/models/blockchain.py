@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 import pytz
 from .block import *
+import random
 
 
 class AbstractBlockchain(models.Model):
@@ -92,6 +94,7 @@ class DuplicateBlockchain(AbstractBlockchain):
     members = models.ManyToManyField('BlockchainUser', blank=True, related_name='dup_other_blockchains')
     creation_time = models.DateTimeField(null=True)
     original_blockchain = models.ForeignKey('Blockchain', on_delete=models.CASCADE)
+    twin_blockchain = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     first_invalid_block_index = models.IntegerField(null=True)
 
     def __str__(self):
@@ -107,28 +110,45 @@ class DuplicateBlockchain(AbstractBlockchain):
         }
         return reverse("bcplatform:blockchain_corrupted_view", kwargs=url_kwargs)
 
+    def is_corrupted(self):
+        return self.first_invalid_block_index != None
+
     # Overriden to get duplicate blocks
     def get_blocks(self):
         return self.duplicateblock_set.all().order_by('index')
 
+    def get_valid_blocks(self):
+        all_blocks = self.get_blocks()
+        if self.first_invalid_block_index is None:
+            return all_blocks
+        return all_blocks.filter(index__lt=self.first_invalid_block_index).order_by('index')
+
+    def get_block_by_i(self, i):
+        try:
+            return self.get_blocks().get(index=i)
+        except ObjectDoesNotExist:
+            return None
+
     def init_from_blockchain(self, blockchain_id):
         self.original_blockchain = Blockchain.objects.get(pk=blockchain_id)
-        self.name = self.original_blockchain.name
+        self.name = str(random.randint(1,101))
         self.admin = self.original_blockchain.admin
+        # Need to save self before setting members
         self.save()
         self.members.set(self.original_blockchain.get_members())
         self.creation_time = timezone.now()
+        self.first_invalid_block_index = None
         self.save()
 
-        self.add_blocks_from_original_blockchain()
+        self._add_blocks_from_original_blockchain()
 
-    def add_blocks_from_original_blockchain(self):
+    def _add_blocks_from_original_blockchain(self):
         original_blocks = self.original_blockchain.get_blocks()
 
         for orig_block in original_blocks:
-            self.add_copy_of_block(orig_block.id)
+            self._add_copy_of_block(orig_block.id)
 
-    def add_copy_of_block(self, block_id):
+    def _add_copy_of_block(self, block_id):
         new_dup_block = DuplicateBlock()
         new_dup_block.populate_from_block(block_id)
         new_dup_block.chain = self
@@ -143,12 +163,14 @@ class DuplicateBlockchain(AbstractBlockchain):
             if block.index == block_i:
                 block.data = data
                 block.nonce = 0
-                # block.hash = block.generate_hash()
-                block.calculate_proof_of_work()
+                block.hash = block.generate_hash()
+                # block.calculate_proof_of_work()
                 block.save()
-                self.first_invalid_block_index = block_i
+
+                if (self.first_invalid_block_index is None) or (self.first_invalid_block_index > block_i):
+                    self.first_invalid_block_index = block_i
                 self.save()
-                return
+                break
 
     def recalculate_block_hashes(self, start_block_i):
         pass
