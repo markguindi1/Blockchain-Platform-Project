@@ -28,7 +28,12 @@ urlpatterns = [
     path('blockchain/<int:bc_pk>/create-block/', views.BlockCreateView.as_view(), name='block_create_view'),
     path('blockchain/<int:bc_pk>/corrupt-blockchain/', views.BlockchainCorruptFormView.as_view(),
          name='blockchain_corrupt_form_view'),
-    path('blockchain/<int:bc_pk>/corrupt-blockchain/<int:corrupt_bc_pk>/', views.BlockchainCorruptedView.as_view(),
+    path('blockchain/corrupt-blockchain/<int:corrupt_bc_pk>/', views.BlockchainCorruptedView.as_view(),
          name='blockchain_corrupted_view'),
+    path('blockchain/corrupt-blockchain/<int:corrupt_bc_pk>/reconcile', views.BlockchainReconcileView.as_view(),
+         name='blockchain_reconcile_view'),
 
+    # REST endpoints
+    path('blockchain/rest/mine-block/<int:dup_bc_pk>/<int:block_i>', views.DuplicateBlockchainMineBlockView.as_view(),
+         name='blockchain_mine_block_view'),
 ]
