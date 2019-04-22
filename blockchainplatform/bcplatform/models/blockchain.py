@@ -19,10 +19,10 @@ class AbstractBlockchain(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name}: {self.pk}"
 
     def __repr__(self):
-        return str(self)
+        return f"<{self.__class__.__name__}: {self.pk}>"
 
     def create_genesis_block(self):
         # If blocks already exist, do not create a genesis block
@@ -93,17 +93,13 @@ class AbstractBlockchain(models.Model):
     def mine_block(self, block_i):
         block_to_mine = self.get_block_by_i(block_i)
         if block_to_mine is not None:
+            prev_block = self.get_block_by_i(block_i-1)
+            block_to_mine.previous_hash = prev_block.hash
             block_to_mine.calculate_proof_of_work()
             block_to_mine.save()
 
 
 class Blockchain(AbstractBlockchain):
-
-    def __str__(self):
-        return f"Blockchain {self.name}"
-
-    def __repr__(self):
-        return f"<{str(self)}>"
 
     def get_absolute_url(self):
         url_kwargs = {
@@ -121,12 +117,6 @@ class DuplicateBlockchain(AbstractBlockchain):
     first_invalid_block_index = models.IntegerField(null=True)
 
     blockClass = DuplicateBlock
-
-    def __str__(self):
-        return f"DuplicateBlockchain {self.name}"
-
-    def __repr__(self):
-        return f"<{str(self)}>"
 
     def get_absolute_url(self):
         url_kwargs = {
@@ -148,9 +138,12 @@ class DuplicateBlockchain(AbstractBlockchain):
             return all_blocks
         return all_blocks.filter(index__lt=self.first_invalid_block_index).order_by('index')
 
+    def get_twin_blockchain(self):
+        return self.twin_blockchain
+
     def init_from_blockchain(self, blockchain_id):
         self.original_blockchain = Blockchain.objects.get(pk=blockchain_id)
-        self.name = str(random.randint(1,101))
+        self.name = f"Duplicate of {self.original_blockchain.name}"
         self.admin = self.original_blockchain.admin
         # Need to save self before setting members
         self.save()
@@ -211,6 +204,17 @@ class DuplicateBlockchain(AbstractBlockchain):
             new_block.hash = twin_block.hash
             new_block.chain = self
             new_block.save()
+
+    def mine_block(self, block_i):
+        super().mine_block(block_i)
+        self.update_first_invalid_block()
+
+    def update_first_invalid_block(self):
+        blocks = self.get_blocks()
+        for block in blocks:
+            if not block.current_hash_is_correct():
+                self.first_invalid_block_index = block.index
+                return
 
     def get_twin_block_by_i(self, block_i):
         return self.twin_blockchain.get_block_by_i(block_i)
