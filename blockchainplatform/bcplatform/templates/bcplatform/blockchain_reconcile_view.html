@@ -1,0 +1,43 @@
+
+{% extends 'base.html' %}
+
+{% block body %}
+
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'bcplatform/css/style.css' %}">
+
+  <div class="container">
+  <!--<div>-->
+
+    <h3 class="text-center">{{ corrupt_bc.name }}</h3>
+    <br />
+    <br />
+    <div class="row">
+      <div class="col-md-6 bottom-table-container">
+        {% with bc=valid_bc bc_blocks=valid_bc_valid_blocks extra_table_classes="table-responsive" %}
+          {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
+        {% endwith %}
+      </div>
+      <div class="col-md-6 bottom-table-container">
+        {% with bc=corrupt_bc bc_blocks=corrupt_bc_valid_blocks extra_table_classes="table-responsive" %}
+          {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
+        {% endwith %}
+      </div>
+
+    </div>
+
+  </div>
+  <script>
+    var CONFIG = {
+      bc_ids: [
+        {{valid_bc.pk}},
+        {{corrupt_bc.pk}}
+      ],
+      bc_num_blocks: [
+        {{ valid_bc_valid_blocks | length }},
+        {{ corrupt_bc_valid_blocks | length }}
+      ]
+    };
+  </script>
+
+{% endblock %}
