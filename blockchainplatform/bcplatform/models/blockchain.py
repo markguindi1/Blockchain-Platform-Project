@@ -13,6 +13,8 @@ class AbstractBlockchain(models.Model):
     members = models.ManyToManyField('BlockchainUser', blank=True, related_name='other_blockchains')
     # Without related name^^, throws error
 
+    blockClass = Block
+
     class Meta:
         abstract = True
 
@@ -26,11 +28,17 @@ class AbstractBlockchain(models.Model):
         # If blocks already exist, do not create a genesis block
         if self.get_previous_block():
             return
-        genesis_block = Block()
-        self.populate_block(genesis_block, data="Genesis Block")
-        genesis_block.save()
+        self.append_data("Genesis Block")
+        # genesis_block = Block()
+        # self.populate_block(genesis_block, data="Genesis Block")
+        # genesis_block.save()
 
-    def populate_block(self, block, data=None):
+    def append_data(self, data):
+        new_block = self.blockClass()
+        self._populate_block(new_block, data)
+        new_block.save()
+
+    def _populate_block(self, block, data=None):
         # Get hash & index of previous block
         previous_hash = self.get_previous_block_hash()
         previous_ind = self.get_previous_block_index()
@@ -45,6 +53,15 @@ class AbstractBlockchain(models.Model):
 
         # Calculate proof of work
         block.calculate_proof_of_work()
+
+    def get_block_by_i(self, i):
+        try:
+            return self.get_blocks().get(index=i)
+        except ObjectDoesNotExist:
+            return None
+
+    def get_block_by_i_queryset(self, i):
+        return self.get_blocks().filter(index=i)
 
     def is_chain_valid(self):
         pass
@@ -73,6 +90,12 @@ class AbstractBlockchain(models.Model):
             return prev_block.index
         return -1
 
+    def mine_block(self, block_i):
+        block_to_mine = self.get_block_by_i(block_i)
+        if block_to_mine is not None:
+            block_to_mine.calculate_proof_of_work()
+            block_to_mine.save()
+
 
 class Blockchain(AbstractBlockchain):
 
@@ -96,6 +119,8 @@ class DuplicateBlockchain(AbstractBlockchain):
     original_blockchain = models.ForeignKey('Blockchain', on_delete=models.CASCADE)
     twin_blockchain = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     first_invalid_block_index = models.IntegerField(null=True)
+
+    blockClass = DuplicateBlock
 
     def __str__(self):
         return f"DuplicateBlockchain {self.name}"
@@ -123,12 +148,6 @@ class DuplicateBlockchain(AbstractBlockchain):
             return all_blocks
         return all_blocks.filter(index__lt=self.first_invalid_block_index).order_by('index')
 
-    def get_block_by_i(self, i):
-        try:
-            return self.get_blocks().get(index=i)
-        except ObjectDoesNotExist:
-            return None
-
     def init_from_blockchain(self, blockchain_id):
         self.original_blockchain = Blockchain.objects.get(pk=blockchain_id)
         self.name = str(random.randint(1,101))
@@ -140,19 +159,27 @@ class DuplicateBlockchain(AbstractBlockchain):
         self.first_invalid_block_index = None
         self.save()
 
-        self._add_blocks_from_original_blockchain()
+        self._add_blocks_from_orig_blockchain()
 
-    def _add_blocks_from_original_blockchain(self):
+    def _add_blocks_from_orig_blockchain(self):
         original_blocks = self.original_blockchain.get_blocks()
 
         for orig_block in original_blocks:
-            self._add_copy_of_block(orig_block.id)
+            self._add_copy_of_orig_block(orig_block)
 
-    def _add_copy_of_block(self, block_id):
+    def _add_copy_of_orig_block(self, og_block):
         new_dup_block = DuplicateBlock()
-        new_dup_block.populate_from_block(block_id)
-        new_dup_block.chain = self
+        self._populate_from_orig_block(new_dup_block, og_block)
         new_dup_block.save()
+
+    def _populate_from_orig_block(self, new_block, og_block):
+        new_block.data = og_block.data
+        new_block.index = og_block.index
+        new_block.timestamp = og_block.timestamp
+        new_block.previous_hash = og_block.previous_hash
+        new_block.nonce = og_block.nonce
+        new_block.hash = og_block.hash
+        new_block.chain = self
 
     def alter_data(self, data, block_i):
         blocks = self.get_blocks()
@@ -169,8 +196,24 @@ class DuplicateBlockchain(AbstractBlockchain):
 
                 if (self.first_invalid_block_index is None) or (self.first_invalid_block_index > block_i):
                     self.first_invalid_block_index = block_i
-                self.save()
                 break
+
+    def duplicate_from_twin(self, block_i):
+        twin_block = self.get_twin_block_by_i(block_i)
+        if twin_block is not None:
+            new_block = self.blockClass()
+
+            new_block.data = twin_block.data
+            new_block.index = twin_block.index
+            new_block.timestamp = twin_block.timestamp
+            new_block.previous_hash = twin_block.previous_hash
+            new_block.nonce = twin_block.nonce
+            new_block.hash = twin_block.hash
+            new_block.chain = self
+            new_block.save()
+
+    def get_twin_block_by_i(self, block_i):
+        return self.twin_blockchain.get_block_by_i(block_i)
 
     def recalculate_block_hashes(self, start_block_i):
         pass
