@@ -48,13 +48,3 @@ class Block(AbstractBlock):
 
 class DuplicateBlock(AbstractBlock):
     chain = models.ForeignKey('DuplicateBlockchain', on_delete=models.CASCADE)
-
-    def populate_from_block(self, block_id):
-        og_block = Block.objects.get(pk=block_id)
-
-        self.data = og_block.data
-        self.index = og_block.index
-        self.timestamp = og_block.timestamp
-        self.previous_hash = og_block.previous_hash
-        self.nonce = og_block.nonce
-        self.hash = og_block.hash
