@@ -1,4 +1,4 @@
-from django.forms import Form, ModelForm
+from django import forms
 from . import models
 
 # class BlockchainForm(ModelForm):
@@ -8,5 +8,9 @@ from . import models
 
 # class BlockCorruptionForm(Form):
 #     pass
+
+
+class BlockForm(forms.Form):
+    data = forms.CharField(max_length=255, widget=forms.Textarea)
 
 
