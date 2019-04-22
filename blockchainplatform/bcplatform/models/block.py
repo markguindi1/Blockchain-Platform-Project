@@ -16,10 +16,10 @@ class AbstractBlock(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"Block # {self.index}"
+        return f"{self.chain}, Block # {self.index}"
 
     def __repr__(self):
-        return str(self)
+        return f"<{self.__class__.__name__}: {self.pk}>"
 
     def generate_hash(self):
         block_header = f"{self.timestamp}{self.data}{self.previous_hash}{self.nonce}"
@@ -34,9 +34,23 @@ class AbstractBlock(models.Model):
             proof = self.generate_hash()
         self.hash = proof
 
+    def current_hash_is_correct(self):
+        return self.hash == self.generate_hash()
+
     @staticmethod
     def is_valid_proof(proof, difficulty=2):
         return proof[:difficulty] == '0'*difficulty
+
+    def to_dict(self):
+        return {
+            "chain_pk": self.chain.pk,
+            "data": self.data,
+            "index": self.index,
+            "timestamp": self.timestamp,
+            "previous_hash": self.previous_hash,
+            "nonce": self.nonce,
+            "hash": self.hash
+        }
 
     def print_block(self):
         pass
