@@ -34,6 +34,6 @@ urlpatterns = [
          name='blockchain_reconcile_view'),
 
     # REST endpoints
-    path('blockchain/rest/mine-block/<int:dup_bc_pk>/<int:block_i>', views.DuplicateBlockchainMineBlockView.as_view(),
+    path('blockchain/rest/mine-block/<int:dup_bc_pk>/<int:block_i>/', views.DuplicateBlockchainMineBlockView.as_view(),
          name='blockchain_mine_block_view'),
 ]
