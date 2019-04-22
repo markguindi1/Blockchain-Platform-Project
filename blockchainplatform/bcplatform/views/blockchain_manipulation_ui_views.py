@@ -30,19 +30,32 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
         This method handles getting the block that the user altered the data of, as well as the altered data itself. It
         then creates a duplicate blockchain
         """
+        # Get block to alter, and its blockchain
         block_id = int(request.POST['block_id'])
         block = Block.objects.get(pk=block_id)
         block_index = block.index
-
         bc_pk = block.chain.pk
 
-        # Create new duplicate blockchain
+        # Create new duplicate blockchains
         dup_bc = DuplicateBlockchain()
+        valid_dup_bc = DuplicateBlockchain()
 
+        # Initialize them from the same blockchain
         dup_bc.init_from_blockchain(bc_pk)
+        valid_dup_bc.init_from_blockchain(bc_pk)
+        valid_dup_bc.first_invalid_block_index = None
 
+        # Set them to reference each other
+        dup_bc.twin_blockchain = valid_dup_bc
+        valid_dup_bc.twin_blockchain = dup_bc
+
+        # Alter the data of the duplicate blockchain
         new_data = request.POST['new_data']
         dup_bc.alter_data(new_data, block_index)
+
+        # Save both blockchains
+        dup_bc.save()
+        valid_dup_bc.save()
 
         # Redirect to homepage
         redirect_url = self.get_success_url(dup_bc.pk)
@@ -50,7 +63,6 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
 
     def get_success_url(self, dup_bc_pk):
         url_kwargs = {
-            'bc_pk': self.kwargs['bc_pk'],
             'corrupt_bc_pk': dup_bc_pk
         }
         return reverse("bcplatform:blockchain_corrupted_view", kwargs=url_kwargs)
@@ -64,6 +76,7 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
 
 
 class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
+
     template_name = "bcplatform/blockchain_corrupted_view.html"
 
     def get_context_data(self, **kwargs):
@@ -74,9 +87,35 @@ class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
 
         corrupt_bc_blocks = corrupt_bc.get_blocks()
 
-        context['bc'] = corrupt_bc
-        context['bc_blocks'] = corrupt_bc_blocks
+        valid_bc = DuplicateBlockchain.objects.get(twin_blockchain=corrupt_bc)
+        valid_bc_blocks = valid_bc.get_blocks()
+
+        context['corrupt_bc'] = corrupt_bc
+        context['corrupt_bc_blocks'] = corrupt_bc_blocks
+        context['valid_bc'] = valid_bc
+        context['valid_bc_blocks'] = valid_bc_blocks
 
         return context
 
 
+class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
+
+    template_name = "bcplatform/blockchain_reconcile_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        corrupt_bc_pk = self.kwargs['corrupt_bc_pk']
+        corrupt_bc = DuplicateBlockchain.objects.get(pk=corrupt_bc_pk)
+
+        corrupt_bc_valid_blocks = corrupt_bc.get_valid_blocks()
+
+        valid_bc = DuplicateBlockchain.objects.get(twin_blockchain=corrupt_bc)
+        valid_bc_valid_blocks = valid_bc.get_valid_blocks()
+
+        context['corrupt_bc'] = corrupt_bc
+        context['corrupt_bc_valid_blocks'] = corrupt_bc_valid_blocks
+        context['valid_bc'] = valid_bc
+        context['valid_bc_valid_blocks'] = valid_bc_valid_blocks
+
+        return context
