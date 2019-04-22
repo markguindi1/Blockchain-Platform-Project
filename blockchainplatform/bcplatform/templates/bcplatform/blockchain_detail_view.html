@@ -42,6 +42,13 @@
       </div>
     </div>
 
+    <script>
+      var CONFIG = {
+        bc_ids: [ {{bc.pk}}, ],
+        bc_num_blocks: [ {{ bc_blocks | length }}, ]
+      };
+    </script>
+
   </div>
 
 {% endblock %}
