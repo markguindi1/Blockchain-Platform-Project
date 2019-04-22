@@ -15,22 +15,27 @@ will appear green (by adding a Bootstrap class to the cell). If there's a
 mismatch, then both will appear red.
 */
 document.addEventListener("DOMContentLoaded", function(event) {
-    var numBlocks = window.CONFIG.numBlocks;
+    var numBCs = window.CONFIG.bc_ids.length;
     // For each cell:
-    for (var i = 1; i < numBlocks; i++) {
-        var blockTableId = "block-{0}-table".format(i);
-        var prevBlockTableId = "block-{0}-table".format(i-1);
 
-        var prevHashTd = $('#' + blockTableId).find("td.prev-hash");
-        var prevBlockHashTd = $('#' + prevBlockTableId).find("td.hash");
+    for (var j = 0; j < numBCs; j++){
+        var bcId = window.CONFIG.bc_ids[j];
+        var numBlocks = window.CONFIG.bc_num_blocks[j];
+        for (var i = 1; i < numBlocks; i++) {
+            var blockTableId = "{0}-{1}-table".format(bcId, i);
+            var prevBlockTableId = "{0}-{1}-table".format(bcId, i-1);
 
-        if (prevHashTd.text() === prevBlockHashTd.text()){
-            var classToAdd = "table-success";
+            var prevHashTd = $('#' + blockTableId).find("td.prev-hash");
+            var prevBlockHashTd = $('#' + prevBlockTableId).find("td.hash");
+
+            if (prevHashTd.text() === prevBlockHashTd.text()){
+                var classToAdd = "table-success";
+            }
+            else{
+                var classToAdd = "table-danger";
+            }
+            prevHashTd.addClass(classToAdd);
+            prevBlockHashTd.addClass(classToAdd);
         }
-        else{
-            var classToAdd = "table-danger";
-        }
-        prevHashTd.addClass(classToAdd);
-        prevBlockHashTd.addClass(classToAdd);
     }
 });
