@@ -6,19 +6,34 @@
   // Populate HTML
   // If HTML hidden, display (using effect)
 
-var createMiningEventHandlers = function(event) {
+var createMiningEventHandlers = function() {
   var blockchains = window.CONFIG.blockchains;
-    var timeoutMs = 10 * 1000;
+  var timeoutMs = window.CONFIG.timeoutMs;
+  var bcIdArray = [];
 
-    // For each blockchain on the page:
-    for (var bcId in blockchains){
-        var numBlocks = blockchains[bcId].numBlocks;
-        var intervalMs = blockchains[bcId].intervalMs;
-        // Add event listener for mineBlockchainForInterval on when page loads
-        document.addEventListener("DOMContentLoaded", function(event){
-          mineBlockchainForInterval(bcId, intervalMs, timeoutMs)
-        });
-    }
+  // Add bcIds to array
+  for (var bcId in window.CONFIG.blockchains){
+    bcIdArray.push(bcId);
+  }
+
+  bcIdArray.forEach(function(bcId){
+    var numBlocks = window.CONFIG.blockchains[bcId].numBlocks;
+    var intervalMs = window.CONFIG.blockchains[bcId].intervalMs;
+    // Add event listener for mineBlockchainForInterval on when page loads
+    document.addEventListener("DOMContentLoaded", function(event){
+      mineBlockchainForInterval(bcId, intervalMs, timeoutMs);
+      console.log("I'm here, bcId is " + bcId);
+      // mineBlockchainOnce(bcId);
+    });
+  });
+}
+
+var mineBlockchainOnce = function(bcId){
+  // Get block index to mine from CONFIG (which is updated by the
+  // mineBlockchainBlock function after each block is mined)
+  var blockchains = window.CONFIG.blockchains;
+  var blockI = blockchains[bcId].numBlocks;
+  mineBlockchainBlock(bcId, blockI);
 }
 
 var mineBlockchainForInterval = function(bcId, intervalMs, timeoutMs){
@@ -26,11 +41,13 @@ var mineBlockchainForInterval = function(bcId, intervalMs, timeoutMs){
 
   // Mine block on interval
   var interval = setInterval(function(){
+  // var interval = setTimeout(function(){
     if(new Date().getTime() - startTime > timeoutMs){
       clearInterval(interval);
+      // clearTimeout(interval);
       return;
     }
-    // Get block index to mine from CONFIG (which is updatred by the
+    // Get block index to mine from CONFIG (which is updated by the
     // mineBlockchainBlock function after each block is mined)
     var blockchains = window.CONFIG.blockchains;
     var blockI = blockchains[bcId].numBlocks;
@@ -45,8 +62,8 @@ var mineBlockchainBlock = function(bcId, blockI){
     var bcId = data.chain_pk;
     var blockI = data.index;
 
-    var minedBlockTableId = getBlockTableId(bcId, i);
-    var $minedBlockTable = $("#" + minedBlockTable);
+    var minedBlockTableId = getBlockTableId(bcId, blockI);
+    var $minedBlockTable = $("#" + minedBlockTableId);
     // If element does not exist:
     if (! $minedBlockTable.length){
       var $minedBlockTable = addBlockHTMLToPage(bcId, blockI);
@@ -106,6 +123,7 @@ var populateBlockHTML = function(bcId, blockI, data){
   $minedBlockTable.find("td.data").find("textarea").append(data.data);
 };
 
+createMiningEventHandlers();
 /*
 Example data from REST endpoint:
 {
