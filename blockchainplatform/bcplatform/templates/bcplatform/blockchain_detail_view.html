@@ -44,8 +44,11 @@
 
     <script>
       var CONFIG = {
-        bc_ids: [ {{ bc.pk }}, ],
-        bc_num_blocks: [ {{ bc_blocks | length }}, ]
+        blockchains: {
+          {{ bc.pk }}: {
+            numBlocks: {{ bc_blocks | length }}
+          },
+        },
       };
     </script>
 

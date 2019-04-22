@@ -16,12 +16,11 @@ mismatch, then both will appear red.
 */
 
 var colorAllHashes = function(event) {
-    var numBCs = window.CONFIG.bc_ids.length;
+    var blockchains = window.CONFIG.blockchains;
 
     // For each blockchain on the page:
-    for (var j = 0; j < numBCs; j++){
-        var bcId = window.CONFIG.bc_ids[j];
-        var numBlocks = window.CONFIG.bc_num_blocks[j];
+    for (var bcId in blockchains){
+        var numBlocks = blockchains[bcId].numBlocks;
         colorBlockchainHashes(bcId, numBlocks);
     }
 }
@@ -55,4 +54,4 @@ var colorBlockchainHashes = function(bcId, numBlocks){
   }
 }
 
-document.addEventListener("DOMContentLoaded", colorHashes);
+document.addEventListener("DOMContentLoaded", colorAllHashes);

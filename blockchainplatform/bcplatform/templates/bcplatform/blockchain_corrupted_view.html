@@ -33,14 +33,15 @@
   </div>
   <script>
     var CONFIG = {
-      bc_ids: [
-        {{valid_bc.pk}},
-        {{corrupt_bc.pk}}
-      ],
-      bc_num_blocks: [
-        {{ valid_bc_blocks | length }},
-        {{ corrupt_bc_blocks | length }}
-      ]
+      blockchains: {
+        {{ valid_bc.pk }}: {
+          numBlocks: {{ valid_bc_blocks | length }}
+        },
+
+        {{ corrupt_bc.pk }}: {
+          numBlocks: {{ corrupt_bc_blocks | length }}
+        },
+      },
     };
   </script>
 
