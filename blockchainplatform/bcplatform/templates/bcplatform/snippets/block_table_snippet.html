@@ -1,24 +1,26 @@
 
 <table class="table" id="{{ bc.pk }}-{{ block.index }}-table">
-  <tr>
-    <th scope="row">Hash:</th>
-    <td class="hash">{{ block.hash }}</td>
-  </tr>
-  <tr>
-    <th scope="row">Timestamp:</th>
-    <td>{{ block.timestamp }}</td>
-  </tr>
-  <tr>
-    <th scope="row">Data:</th>
-    <!--<td>{{ block.data }}</td>-->
-    <td><textarea rows="4" style="width: 100%; overflow-y: scroll;" disabled>{{ block.data }}</textarea></td>
-  </tr>
-  <tr>
-    <th scope="row">Nonce:</th>
-    <td>{{ block.nonce }}</td>
-  </tr>
-  <tr>
-    <th scope="row">Previous Hash:</th>
-    <td class="prev-hash">{{ block.previous_hash }}</td>
-  </tr>
+  <tbody class="block-tbody">
+    <tr>
+      <th scope="row">Hash:</th>
+      <td class="hash">{{ block.hash }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Timestamp:</th>
+      <td class="timestamp">{{ block.timestamp }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Data:</th>
+      <!--<td>{{ block.data }}</td>-->
+      <td class="data"><textarea rows="4" style="width: 100%; overflow-y: scroll;" disabled>{{ block.data }}</textarea></td>
+    </tr>
+    <tr>
+      <th scope="row">Nonce:</th>
+      <td class="nonce">{{ block.nonce }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Previous Hash:</th>
+      <td class="prev-hash">{{ block.previous_hash }}</td>
+    </tr>
+  </tbody>
 </table>
