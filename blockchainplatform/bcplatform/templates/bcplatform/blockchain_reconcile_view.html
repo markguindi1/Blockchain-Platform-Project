@@ -14,11 +14,13 @@
     <br />
     <div class="row">
       <div class="col-md-6 bottom-table-container">
+        <h4>Original Blockchain</h4>
         {% with bc=valid_bc bc_blocks=valid_bc_valid_blocks extra_table_classes="table-responsive" %}
           {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
         {% endwith %}
       </div>
       <div class="col-md-6 bottom-table-container">
+        <h4>Corrupt Blockchain</h4>
         {% with bc=corrupt_bc bc_blocks=corrupt_bc_valid_blocks extra_table_classes="table-responsive" %}
           {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
         {% endwith %}
@@ -31,14 +33,23 @@
     var CONFIG = {
       blockchains: {
         {{ valid_bc.pk }}: {
-          numBlocks: {{ valid_bc_valid_blocks | length }}
+          numBlocks: {{ valid_bc_valid_blocks | length }},
+          intervalMs: 2 * 1000,
         },
 
         {{ corrupt_bc.pk }}: {
-          numBlocks: {{ corrupt_bc_valid_blocks | length }}
+          numBlocks: {{ corrupt_bc_valid_blocks | length }},
+          intervalMs: 2 * 1000,
         },
       },
+
+      timeoutMs: 10 * 1000,
+
     };
   </script>
+
+  <script src="{% static 'bcplatform/js/utils.js' %}"></script>
+  <script src="{% static 'bcplatform/js/colorHashes.js' %}"></script>
+  <script src="{% static 'bcplatform/js/mineBlocks.js' %}"></script>
 
 {% endblock %}

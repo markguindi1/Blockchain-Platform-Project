@@ -1,8 +1,4 @@
 
-{% load static %}
-
-<script src="{% static 'bcplatform/js/colorHashes.js' %}"></script>
-
 <table class="table table-striped table-bordered {{ extra_table_classes }}" id="{{ bc.pk }}-table">
   <thead>
     <tr>
@@ -10,10 +6,10 @@
       <th scope="col">Block Data</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="blockchain-tbody">
     {% for block in bc_blocks reversed %}
-      <tr>
-        <th scope="row">{{ block.index }}</th>
+      <tr id="{{ bc.pk }}-{{ block.index }}-row">
+        <th scope="row" class="block-i" id="{{ bc.pk }}-{{ block.index }}-block-i">{{ block.index }}</th>
         <td>
           <!-- Nested Table for single Block-->
           {% include 'bcplatform/snippets/block_table_snippet.html' %}
