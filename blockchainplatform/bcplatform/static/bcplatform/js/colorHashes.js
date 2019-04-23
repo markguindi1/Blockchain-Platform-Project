@@ -6,9 +6,7 @@ will appear green (by adding a Bootstrap class to the cell). If there's a
 mismatch, then both will appear red.
 */
 
-var colorAllHashes = function() {
-    var blockchains = window.CONFIG.blockchains;
-
+var colorAllHashes = function(blockchains) {
     // For each blockchain on the page:
     for (var bcId in blockchains){
         var numBlocks = blockchains[bcId].numBlocks;
@@ -46,5 +44,6 @@ var colorBlockchainHashes = function(bcId, numBlocks){
 }
 
 document.addEventListener("DOMContentLoaded", function(event){
-  colorAllHashes();
+  var blockchains = window.CONFIG.blockchains;
+  colorAllHashes(blockchains);
 });
