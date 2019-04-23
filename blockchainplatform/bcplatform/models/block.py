@@ -46,7 +46,7 @@ class AbstractBlock(models.Model):
             "chain_pk": self.chain.pk,
             "data": self.data,
             "index": self.index,
-            "timestamp": self.timestamp,
+            "timestamp": self.timestamp.strftime("%B %-d, %Y, %-I:%M %p"),
             "previous_hash": self.previous_hash,
             "nonce": self.nonce,
             "hash": self.hash
