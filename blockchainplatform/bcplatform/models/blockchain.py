@@ -19,10 +19,10 @@ class AbstractBlockchain(models.Model):
         abstract = True
 
     def __str__(self):
-        return f"{self.name}: {self.pk}"
+        return f"{self.name}"
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}: {self.pk}>"
+        return f"<{self.__class__.__name__}: {self.pk}, Name: {self.name}>"
 
     def create_genesis_block(self):
         # If blocks already exist, do not create a genesis block
