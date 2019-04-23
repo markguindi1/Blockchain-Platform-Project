@@ -16,9 +16,11 @@ var createMiningEventHandlers = function() {
     bcIdArray.push(bcId);
   }
 
+  // forEach is used so the event listener uses the current value of bcId, not
+  // the last value.
   bcIdArray.forEach(function(bcId){
-    var numBlocks = window.CONFIG.blockchains[bcId].numBlocks;
-    var intervalMs = window.CONFIG.blockchains[bcId].intervalMs;
+    var numBlocks = blockchains[bcId].numBlocks;
+    var intervalMs = blockchains[bcId].intervalMs;
     // Add event listener for mineBlockchainForInterval on when page loads
     document.addEventListener("DOMContentLoaded", function(event){
       mineBlockchainForInterval(bcId, intervalMs, timeoutMs);
@@ -28,6 +30,7 @@ var createMiningEventHandlers = function() {
   });
 }
 
+// Used for development/testing only
 var mineBlockchainOnce = function(bcId){
   // Get block index to mine from CONFIG (which is updated by the
   // mineBlockchainBlock function after each block is mined)
@@ -62,11 +65,11 @@ var mineBlockchainBlock = function(bcId, blockI){
     var bcId = data.chain_pk;
     var blockI = data.index;
 
-    var minedBlockTableId = getBlockTableId(bcId, blockI);
-    var $minedBlockTable = $("#" + minedBlockTableId);
+    var minedBlockRowId = getBlockRowId(bcId, blockI);
+    var $minedBlockRow = $("#" + minedBlockRowId);
     // If element does not exist:
-    if (! $minedBlockTable.length){
-      var $minedBlockTable = addBlockHTMLToPage(bcId, blockI);
+    if (! $minedBlockRow.length){
+      $minedBlockRow = addBlockHTMLToPage(bcId, blockI);
     }
     // Empty block
     emptyBlockHTML(bcId, blockI);
@@ -75,7 +78,7 @@ var mineBlockchainBlock = function(bcId, blockI){
     populateBlockHTML(bcId, blockI, data);
 
     // If HTML hidden, display (using effect)
-    $minedBlockTable.show()
+    $minedBlockRow.show()
 
     // Update numBlocks
     window.CONFIG.blockchains[bcId].numBlocks++;
@@ -88,21 +91,33 @@ var mineBlockchainBlock = function(bcId, blockI){
 
 var addBlockHTMLToPage = function(bcId, blockI){
   // Add element to page
-  var genesisBlockTableId = getBlockTableId(bcId, 0);
+  var genesisBlockRowId = getBlockRowId(bcId, 0);
   var blockchainTableId = getBlockchainTableId(bcId);
-  var $newBlockTable = $("#" + genesisBlockTableId)
-    .clone() // Clone block table
-    .prop('id', getBlockTableId(bcId, blockI)) // Set new block table id to correct id
-    .prependTo("#" + blockchainTableId) // Prepend to blockchain table
-    .hide(); // Hide new block table
+  var newBlockNumberCellId = getBlockNumberCellId(bcId, blockI);
+  var newBlockRowId = getBlockRowId(bcId, blockI);
+  var newBlockTableId = getBlockTableId(bcId, blockI);
+  var $blockchainTable = $("#" + blockchainTableId);
+  var $newBlockRow = $("#" + genesisBlockRowId)
+    .clone() // Clone block row
+    .prependTo($blockchainTable.find("tbody.blockchain-tbody")) // Prepend to blockchain table body
+    .prop('id', newBlockRowId) // Set new block row id to correct id
+    .hide(); // Hide new block row
 
-  return $newBlockTable;
+  // Set new block table id to correct id
+  $newBlockRow.find("table").prop('id', newBlockTableId);
+  // Set new block "Block #" cell id to correct id
+  $newBlockRow.find(".block-i").prop('id', newBlockNumberCellId);
+
+  return $newBlockRow;
 };
 
 var emptyBlockHTML = function(bcId, blockI){
   // Empty cells
-  var $minedBlockTable = $("#" + getBlockTableId(bcId, blockI));
+  var $minedBlockRow = $("#" + getBlockRowId(bcId, blockI))
+    .find("th" + "#" + getBlockNumberCellId(bcId, blockI))
+    .empty();
 
+  var $minedBlockTable = $("#" + getBlockTableId(bcId, blockI));
   $minedBlockTable.find("td").each(function(){
     var $dataTextarea = $(this).find("textarea");
     if ($dataTextarea.length){
@@ -115,6 +130,11 @@ var emptyBlockHTML = function(bcId, blockI){
 }
 
 var populateBlockHTML = function(bcId, blockI, data){
+
+  var $minedBlockRow = $("#" + getBlockRowId(bcId, blockI))
+    .find("th" + "#" + getBlockNumberCellId(bcId, blockI))
+    .append(data.index);
+
   var $minedBlockTable = $("#" + getBlockTableId(bcId, blockI));
   $minedBlockTable.find("td.hash").append(data.hash);
   $minedBlockTable.find("td.timestamp").append(data.timestamp);
