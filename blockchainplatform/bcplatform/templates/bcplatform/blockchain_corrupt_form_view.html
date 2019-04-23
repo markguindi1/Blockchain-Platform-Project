@@ -8,6 +8,13 @@
     <h3 class="text-center">{{ bc }}</h3>
     <br />
 
+    {% with acc_title="Explanation" %}
+      {% with acc_content="Edit the data of any block, and then click the corresponding 'Submit' button. " %}
+        {% include "bcplatform/snippets/accordion.html" %}
+      {% endwith %}
+    {% endwith %}
+
+
     <br />
     <div class="row">
 

@@ -101,6 +101,13 @@ class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
 class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
 
     template_name = "bcplatform/blockchain_manipulation_view.html"
+    explanation = "View how the corrupt blockchain is not able to mine blocks fast enough to catch up to the original " \
+                  "valid blockchain. Blocks will be mined for a set amount of time, after which you will be able to " \
+                  "see how many blocks have been mined, and how many blocks each chain has in total. Because the " \
+                  "longest valid chain is considered authoritative (based on the consensus algorithm), the original " \
+                  "blockchain will prevail, and all members of the blockchain will know that the other has been " \
+                  "corrupted. "
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -123,6 +130,7 @@ class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
         context['corrupt_bc_interval'] = 2
         context['valid_bc_interval'] = 2
         context['timeout'] = 15
+        context['acc_content'] = self.explanation
 
         return context
 
@@ -130,6 +138,13 @@ class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
 class BlockchainAttackView(LoginRequiredMixin, TemplateView):
 
     template_name = "bcplatform/blockchain_manipulation_view.html"
+    explanation = "View how, by simulating a 51% attack (by which a majority of the computing power is able to " \
+                  "validate the corrupt chain), the corrupt chain will prevail by mining blocks faster than the " \
+                  "original, valid blockchain. Blocks will be mined for a set amount of time, after which you will be " \
+                  "able to see how many blocks have been mined, and how many blocks each chain has in total. Because " \
+                  "the longest valid chain is considered authoritative (based on the consensus algorithm), the " \
+                  "corrupted blockchain will prevail, and all members of the blockchain will think that the original has " \
+                  "been corrupted. "
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -149,9 +164,11 @@ class BlockchainAttackView(LoginRequiredMixin, TemplateView):
 
         # Setting other context vars
         context['title'] = "51% Attack"
-        context['corrupt_bc_interval'] = 1
+        context['corrupt_bc_interval'] = 0.75
         context['valid_bc_interval'] = 2
         context['timeout'] = 15
+        context['acc_content'] = self.explanation
+
 
         return context
 

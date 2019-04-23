@@ -11,6 +11,9 @@
 
     <h3 class="text-center">{{ corrupt_bc.name }} - {{ title }}</h3>
     <br />
+    {% with acc_title="Explanation" %}
+      {% include "bcplatform/snippets/accordion.html" %}
+    {% endwith %}
     <br />
     <div class="row">
       <div class="col-md-6 bottom-table-container">
@@ -35,11 +38,13 @@
         {{ valid_bc.pk }}: {
           numBlocks: {{ valid_bc_valid_blocks | length }},
           intervalMs: {{ valid_bc_interval }} * 1000,
+          newBlocks: 0,
         },
 
         {{ corrupt_bc.pk }}: {
           numBlocks: {{ corrupt_bc_valid_blocks | length }},
           intervalMs: {{ corrupt_bc_interval }} * 1000,
+          newBlocks: 0,
         },
       },
 
