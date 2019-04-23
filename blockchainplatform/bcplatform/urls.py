@@ -32,6 +32,8 @@ urlpatterns = [
          name='blockchain_corrupted_view'),
     path('blockchain/corrupt-blockchain/<int:corrupt_bc_pk>/reconcile', views.BlockchainReconcileView.as_view(),
          name='blockchain_reconcile_view'),
+    path('blockchain/corrupt-blockchain/<int:corrupt_bc_pk>/attack', views.BlockchainAttackView.as_view(),
+         name='blockchain_attack_view'),
 
     # REST endpoints
     path('blockchain/rest/mine-block/<int:dup_bc_pk>/<int:block_i>/', views.DuplicateBlockchainMineBlockView.as_view(),

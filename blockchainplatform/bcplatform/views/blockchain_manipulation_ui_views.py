@@ -100,7 +100,7 @@ class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
 
 class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
 
-    template_name = "bcplatform/blockchain_reconcile_view.html"
+    template_name = "bcplatform/blockchain_manipulation_view.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,4 +118,41 @@ class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
         context['valid_bc'] = valid_bc
         context['valid_bc_valid_blocks'] = valid_bc_valid_blocks
 
+        # Setting other context vars
+        context['title'] = "Reconciliation Attempt"
+        context['corrupt_bc_interval'] = 2
+        context['valid_bc_interval'] = 2
+        context['timeout'] = 15
+
         return context
+
+
+class BlockchainAttackView(LoginRequiredMixin, TemplateView):
+
+    template_name = "bcplatform/blockchain_manipulation_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        corrupt_bc_pk = self.kwargs['corrupt_bc_pk']
+        corrupt_bc = DuplicateBlockchain.objects.get(pk=corrupt_bc_pk)
+
+        corrupt_bc_valid_blocks = corrupt_bc.get_valid_blocks()
+
+        valid_bc = DuplicateBlockchain.objects.get(twin_blockchain=corrupt_bc)
+        valid_bc_valid_blocks = valid_bc.get_valid_blocks()
+
+        context['corrupt_bc'] = corrupt_bc
+        context['corrupt_bc_valid_blocks'] = corrupt_bc_valid_blocks
+        context['valid_bc'] = valid_bc
+        context['valid_bc_valid_blocks'] = valid_bc_valid_blocks
+
+        # Setting other context vars
+        context['title'] = "51% Attack"
+        context['corrupt_bc_interval'] = 1
+        context['valid_bc_interval'] = 2
+        context['timeout'] = 15
+
+        return context
+
+
