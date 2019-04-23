@@ -27,3 +27,11 @@ var getBlockRowId = function(bcId, blockI){
 var getBlockNumberCellId = function(bcId, blockI){
   return "{0}-{1}-block-i".format(bcId, blockI);
 }
+
+var getStatusDivId = function(bcId){
+  return "{0}-status".format(bcId);
+}
+
+var getBlockchainContainerId = function(bcId){
+  return "{0}-container".format(bcId);
+}

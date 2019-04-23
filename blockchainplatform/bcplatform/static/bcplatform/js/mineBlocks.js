@@ -24,8 +24,8 @@ var createMiningEventHandlers = function() {
     var intervalMs = blockchains[bcId].intervalMs;
     // Add event listener for mineBlockchainForInterval on when page loads
     document.addEventListener("DOMContentLoaded", function(event){
+      $("#" + "mine-again-btn").hide();
       mineBlockchainForInterval(bcId, intervalMs, timeoutMs);
-      console.log("I'm here, bcId is " + bcId);
       // mineBlockchainOnce(bcId);
     });
   });
@@ -41,6 +41,9 @@ var mineBlockchainOnce = function(bcId){
 }
 
 var mineBlockchainForInterval = function(bcId, intervalMs, timeoutMs){
+
+  showSpinner(bcId);
+
   var startTime = new Date().getTime();
 
   // Mine block on interval
@@ -49,6 +52,11 @@ var mineBlockchainForInterval = function(bcId, intervalMs, timeoutMs){
     if(new Date().getTime() - startTime > timeoutMs){
       clearInterval(interval);
       // clearTimeout(interval);
+      // Do stuff to render whatever needs to be rendered when done
+      hideSpinner(bcId);
+      showResultText(bcId);
+      colorWinner("#ccffd0");
+      $("#" + "mine-again-btn").show();
       return;
     }
     // Get block index to mine from CONFIG (which is updated by the
@@ -56,7 +64,48 @@ var mineBlockchainForInterval = function(bcId, intervalMs, timeoutMs){
     var blockchains = window.CONFIG.blockchains;
     var blockI = blockchains[bcId].numBlocks;
     mineBlockchainBlock(bcId, blockI);
+    showResultText(bcId);
   }, intervalMs);
+}
+
+var showSpinner = function(bcId){
+  var spinnerClass = "spinner-border";
+  var bcStatusId = getStatusDivId(bcId);
+  $("#" + bcStatusId).find("." + spinnerClass).show()
+}
+
+var hideSpinner = function(bcId){
+  var spinnerClass = "spinner-border";
+  var bcStatusId = getStatusDivId(bcId);
+  $("#" + bcStatusId).find("." + spinnerClass).hide()
+}
+
+var showResultText = function(bcId){
+  var numBlocks = window.CONFIG.blockchains[bcId].numBlocks;
+  var newBlocks = window.CONFIG.blockchains[bcId].newBlocks;
+  var resultText = "{0} blocks mined. {1} blocks total.".format(newBlocks, numBlocks);
+  $("#" + getStatusDivId(bcId)).find("p").empty();
+  $("#" + getStatusDivId(bcId)).find("p").append(resultText);
+}
+
+var colorWinner = function(color){
+  var winner = getWinner();
+  var winnerContainerId = getBlockchainContainerId(winner);
+  $("#" + winnerContainerId).css("background-color", color);
+}
+
+var getWinner = function(){
+  var max = {
+    bcId: -1,
+    numBlocks: -1
+  }
+  for (var bcId in window.CONFIG.blockchains){
+    if (window.CONFIG.blockchains[bcId].numBlocks > max.numBlocks){
+      max.bcId = bcId;
+      max.numBlocks = window.CONFIG.blockchains[bcId].numBlocks;
+    }
+  }
+  return max.bcId;
 }
 
 var mineBlockchainBlock = function(bcId, blockI){
@@ -81,8 +130,9 @@ var mineBlockchainBlock = function(bcId, blockI){
     // If HTML hidden, display (using effect)
     $minedBlockRow.show()
 
-    // Update numBlocks
+    // Update numBlocks and newBlocks
     window.CONFIG.blockchains[bcId].numBlocks++;
+    window.CONFIG.blockchains[bcId].newBlocks++;
 
     // Recolor Blockchain hashes
     colorBlockchainHashes(bcId, window.CONFIG.blockchains[bcId].numBlocks);

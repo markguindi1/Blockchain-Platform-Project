@@ -15,15 +15,30 @@
       {% include "bcplatform/snippets/accordion.html" %}
     {% endwith %}
     <br />
+    <button type="button" class="btn btn-primary" id="mine-again-btn" onclick="window.location.reload(true);">Continue mining blocks</button>
+    <br />
+    <br />
     <div class="row">
-      <div class="col-md-6 bottom-table-container">
+      <div class="col-md-6 bottom-table-container" id="{{ valid_bc.pk }}-container">
         <h4>Original Blockchain</h4>
+        <div class="bc-status" id="{{ valid_bc.pk }}-status">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <p></p>
+        </div>
         {% with bc=valid_bc bc_blocks=valid_bc_valid_blocks extra_table_classes="table-responsive" %}
           {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
         {% endwith %}
       </div>
-      <div class="col-md-6 bottom-table-container">
+      <div class="col-md-6 bottom-table-container" id="{{ corrupt_bc.pk }}-container">
         <h4>Corrupt Blockchain</h4>
+        <div class="bc-status" id="{{ corrupt_bc.pk }}-status">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <p></p>
+        </div>
         {% with bc=corrupt_bc bc_blocks=corrupt_bc_valid_blocks extra_table_classes="table-responsive" %}
           {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
         {% endwith %}
