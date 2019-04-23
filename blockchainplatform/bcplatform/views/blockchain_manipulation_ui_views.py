@@ -11,6 +11,7 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
 
     template_name = "bcplatform/blockchain_corrupt_form_view.html"
     # success_url = reverse_lazy("bcplatform:homepage")
+    explanation = 'Edit the data of any block, and then click the corresponding "Submit Changed Data" button.'
 
     def get(self, request, *args, **kwargs):
         """
@@ -22,7 +23,9 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
         context = {
             'bc': bc,
             'bc_blocks': bc_blocks,
+            'acc_content': self.explanation,
         }
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -78,6 +81,10 @@ class BlockchainCorruptFormView(LoginRequiredMixin, View):
 class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
 
     template_name = "bcplatform/blockchain_corrupted_view.html"
+    explanation = "The corrupted blockchain vs. the original blockchain. You should be able to see how the 'Hash' of " \
+                  "the corrupted block does not match the 'Previous Hash' of the next block, making it obvious that " \
+                  "the chain has been corrupted.To (unsuccessfully) attempt to reconcile the corrupted blockchain, " \
+                  "or to successfully reconcile the chain using a 51% attack, click the desired button. "
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,6 +101,7 @@ class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
         context['corrupt_bc_blocks'] = corrupt_bc_blocks
         context['valid_bc'] = valid_bc
         context['valid_bc_blocks'] = valid_bc_blocks
+        context['acc_content'] = self.explanation
 
         return context
 
@@ -101,7 +109,7 @@ class BlockchainCorruptedView(LoginRequiredMixin, TemplateView):
 class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
 
     template_name = "bcplatform/blockchain_manipulation_view.html"
-    explanation = "View how the corrupt blockchain is not able to mine blocks fast enough to catch up to the original " \
+    explanation = "The corrupt blockchain is not able to mine blocks fast enough to catch up to the original " \
                   "valid blockchain. Blocks will be mined for a set amount of time, after which you will be able to " \
                   "see how many blocks have been mined, and how many blocks each chain has in total. Because the " \
                   "longest valid chain is considered authoritative (based on the consensus algorithm), the original " \
@@ -138,7 +146,7 @@ class BlockchainReconcileView(LoginRequiredMixin, TemplateView):
 class BlockchainAttackView(LoginRequiredMixin, TemplateView):
 
     template_name = "bcplatform/blockchain_manipulation_view.html"
-    explanation = "View how, by simulating a 51% attack (by which a majority of the computing power is able to " \
+    explanation = "By simulating a 51% attack (by which a majority of the computing power is able to " \
                   "validate the corrupt chain), the corrupt chain will prevail by mining blocks faster than the " \
                   "original, valid blockchain. Blocks will be mined for a set amount of time, after which you will be " \
                   "able to see how many blocks have been mined, and how many blocks each chain has in total. Because " \
@@ -168,7 +176,6 @@ class BlockchainAttackView(LoginRequiredMixin, TemplateView):
         context['valid_bc_interval'] = 2
         context['timeout'] = 15
         context['acc_content'] = self.explanation
-
 
         return context
 
