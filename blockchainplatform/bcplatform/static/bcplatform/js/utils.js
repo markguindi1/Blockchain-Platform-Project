@@ -19,3 +19,11 @@ var getBlockchainTableId = function(bcId){
 var getBlockTableId = function(bcId, blockI){
   return "{0}-{1}-table".format(bcId, blockI);
 }
+
+var getBlockRowId = function(bcId, blockI){
+  return "{0}-{1}-row".format(bcId, blockI);
+}
+
+var getBlockNumberCellId = function(bcId, blockI){
+  return "{0}-{1}-block-i".format(bcId, blockI);
+}
