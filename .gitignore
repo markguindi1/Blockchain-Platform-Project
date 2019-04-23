@@ -109,3 +109,4 @@ Icon?
 settings_secret.py
 .DS_Store
 
+blockchainplatform/prod_static/
