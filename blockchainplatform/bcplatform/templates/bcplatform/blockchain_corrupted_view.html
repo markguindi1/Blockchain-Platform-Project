@@ -12,17 +12,19 @@
     <h3 class="text-center">{{ corrupt_bc.name }}</h3>
     <br />
     <br />
-    <a href="{% url 'bcplatform:blockchain_reconcile_view' corrupt_bc.pk %}"><button type="button" class="btn btn-primary btn-sm">Placeholder for Reconcile</button></a>
-    <a href="#"><button type="button" class="btn btn-secondary btn-sm">Placeholder for 51% Attack</button></a>
+    <a href="{% url 'bcplatform:blockchain_reconcile_view' corrupt_bc.pk %}"><button type="button" class="btn btn-primary btn-sm">Attempt to Reconcile</button></a>
+    <a href="#"><button type="button" class="btn btn-secondary btn-sm">Perform 51% Attack</button></a>
     <br />
     <br />
     <div class="row">
       <div class="col-md-6 bottom-table-container">
+        <h4>Original Blockchain</h4>
         {% with bc=valid_bc bc_blocks=valid_bc_blocks extra_table_classes="table-responsive" %}
           {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
         {% endwith %}
       </div>
       <div class="col-md-6 bottom-table-container">
+        <h4>Corrupt Blockchain</h4>
         {% with bc=corrupt_bc bc_blocks=corrupt_bc_blocks extra_table_classes="table-responsive" %}
           {% include 'bcplatform/snippets/blockchain_table_snippet.html' %}
         {% endwith %}
@@ -44,5 +46,7 @@
       },
     };
   </script>
+  <script src="{% static 'bcplatform/js/utils.js' %}"></script>
+  <script src="{% static 'bcplatform/js/colorHashes.js' %}"></script>
 
 {% endblock %}
