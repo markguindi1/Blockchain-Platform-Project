@@ -7,6 +7,7 @@
   // If HTML hidden, display (using effect)
 
 var createMiningEventHandlers = function() {
+  window.CONFIG = CONFIG;
   var blockchains = window.CONFIG.blockchains;
   var timeoutMs = window.CONFIG.timeoutMs;
   var bcIdArray = [];
