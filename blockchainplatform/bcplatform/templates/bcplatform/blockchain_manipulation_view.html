@@ -9,7 +9,7 @@
   <div class="container">
   <!--<div>-->
 
-    <h3 class="text-center">{{ corrupt_bc.name }}</h3>
+    <h3 class="text-center">{{ corrupt_bc.name }} - {{ title }}</h3>
     <br />
     <br />
     <div class="row">
@@ -34,16 +34,16 @@
       blockchains: {
         {{ valid_bc.pk }}: {
           numBlocks: {{ valid_bc_valid_blocks | length }},
-          intervalMs: 2 * 1000,
+          intervalMs: {{ valid_bc_interval }} * 1000,
         },
 
         {{ corrupt_bc.pk }}: {
           numBlocks: {{ corrupt_bc_valid_blocks | length }},
-          intervalMs: 2 * 1000,
+          intervalMs: {{ corrupt_bc_interval }} * 1000,
         },
       },
 
-      timeoutMs: 10 * 1000,
+      timeoutMs: {{ timeout }} * 1000,
 
     };
   </script>
