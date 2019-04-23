@@ -126,7 +126,7 @@ class DuplicateBlockchain(AbstractBlockchain):
         return reverse("bcplatform:blockchain_corrupted_view", kwargs=url_kwargs)
 
     def is_corrupted(self):
-        return self.first_invalid_block_index != None
+        return self.first_invalid_block_index is not None
 
     # Overriden to get duplicate blocks
     def get_blocks(self):
@@ -215,6 +215,7 @@ class DuplicateBlockchain(AbstractBlockchain):
             if not block.current_hash_is_correct():
                 self.first_invalid_block_index = block.index
                 return
+            self.first_invalid_block_index = None
 
     def get_twin_block_by_i(self, block_i):
         return self.twin_blockchain.get_block_by_i(block_i)
