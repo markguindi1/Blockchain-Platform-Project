@@ -9,6 +9,7 @@ from bcplatform.models import *
 
 # Create your views here.
 
+GLOBAL_BLOCKCHAIN_NAME = "Sample Global Blockchain"
 
 class UserCreate(CreateView):
     form_class = UserCreationForm
@@ -34,7 +35,15 @@ class UserCreate(CreateView):
         login(self.request, new_user)
         bc_user = BlockchainUser(user=new_user)
         bc_user.save()
+
+        self.add_user_to_global_blockchain(bc_user)
+
         return valid
+
+    def add_user_to_global_blockchain(self, bc_user):
+        global_blockchain: Blockchain = Blockchain.objects.filter(name=GLOBAL_BLOCKCHAIN_NAME).order_by('id').first()
+        if global_blockchain:
+            global_blockchain.members.add(bc_user)
 
 
 class ManageAccountView(LoginRequiredMixin, TemplateView):
