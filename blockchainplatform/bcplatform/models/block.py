@@ -52,9 +52,6 @@ class AbstractBlock(models.Model):
             "hash": self.hash
         }
 
-    def print_block(self):
-        pass
-
 
 class Block(AbstractBlock):
     pass

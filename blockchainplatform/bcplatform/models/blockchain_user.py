@@ -10,9 +10,3 @@ class BlockchainUser(models.Model):
 
     def __repr__(self):
         return f"<BlockchainUser: {self.user.username}>"
-
-    def get_own_blockchains(self):
-        pass
-
-    def get_other_blockchains(self):
-        pass

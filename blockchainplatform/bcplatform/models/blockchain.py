@@ -24,6 +24,27 @@ class AbstractBlockchain(models.Model):
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.pk}, Name: {self.name}>"
 
+    def get_blocks(self):
+        return self.block_set.all().order_by('index')
+
+    def get_members(self):
+        return self.members.all()
+
+    def get_previous_block(self):
+        return self.get_blocks().last()
+
+    def get_previous_block_hash(self):
+        prev_block = self.get_previous_block()
+        if prev_block:
+            return prev_block.hash
+        return "0"
+
+    def get_previous_block_index(self):
+        prev_block = self.get_previous_block()
+        if prev_block:
+            return prev_block.index
+        return -1
+
     def create_genesis_block(self):
         # If blocks already exist, do not create a genesis block
         if self.get_previous_block():
@@ -60,36 +81,6 @@ class AbstractBlockchain(models.Model):
         except ObjectDoesNotExist:
             return None
 
-    def get_block_by_i_queryset(self, i):
-        return self.get_blocks().filter(index=i)
-
-    def is_chain_valid(self):
-        pass
-
-    def print_chain(self):
-        pass
-
-    def get_blocks(self):
-        return self.block_set.all().order_by('index')
-
-    def get_members(self):
-        return self.members.all()
-
-    def get_previous_block(self):
-        return self.get_blocks().last()
-
-    def get_previous_block_hash(self):
-        prev_block = self.get_previous_block()
-        if prev_block:
-            return prev_block.hash
-        return "0"
-
-    def get_previous_block_index(self):
-        prev_block = self.get_previous_block()
-        if prev_block:
-            return prev_block.index
-        return -1
-
     def mine_block(self, block_i):
         block_to_mine = self.get_block_by_i(block_i)
         if block_to_mine is not None:
@@ -125,9 +116,6 @@ class DuplicateBlockchain(AbstractBlockchain):
         }
         return reverse("bcplatform:blockchain_corrupted_view", kwargs=url_kwargs)
 
-    def is_corrupted(self):
-        return self.first_invalid_block_index is not None
-
     # Overriden to get duplicate blocks
     def get_blocks(self):
         return self.duplicateblock_set.all().order_by('index')
@@ -137,6 +125,9 @@ class DuplicateBlockchain(AbstractBlockchain):
         if self.first_invalid_block_index is None:
             return all_blocks
         return all_blocks.filter(index__lt=self.first_invalid_block_index).order_by('index')
+
+    def is_corrupted(self):
+        return self.first_invalid_block_index is not None
 
     def get_twin_blockchain(self):
         return self.twin_blockchain
@@ -151,7 +142,6 @@ class DuplicateBlockchain(AbstractBlockchain):
         self.creation_time = timezone.now()
         self.first_invalid_block_index = None
         self.save()
-
         self._add_blocks_from_orig_blockchain()
 
     def _add_blocks_from_orig_blockchain(self):
@@ -160,18 +150,18 @@ class DuplicateBlockchain(AbstractBlockchain):
         for orig_block in original_blocks:
             self._add_copy_of_orig_block(orig_block)
 
-    def _add_copy_of_orig_block(self, og_block):
+    def _add_copy_of_orig_block(self, original_block):
         new_dup_block = DuplicateBlock()
-        self._populate_from_orig_block(new_dup_block, og_block)
+        self._populate_from_orig_block(new_dup_block, original_block)
         new_dup_block.save()
 
-    def _populate_from_orig_block(self, new_block, og_block):
-        new_block.data = og_block.data
-        new_block.index = og_block.index
-        new_block.timestamp = og_block.timestamp
-        new_block.previous_hash = og_block.previous_hash
-        new_block.nonce = og_block.nonce
-        new_block.hash = og_block.hash
+    def _populate_from_orig_block(self, new_block, original_block):
+        new_block.data = original_block.data
+        new_block.index = original_block.index
+        new_block.timestamp = original_block.timestamp
+        new_block.previous_hash = original_block.previous_hash
+        new_block.nonce = original_block.nonce
+        new_block.hash = original_block.hash
         new_block.chain = self
 
     def alter_data(self, data, block_i):
@@ -191,7 +181,7 @@ class DuplicateBlockchain(AbstractBlockchain):
                     self.first_invalid_block_index = block_i
                 break
 
-    def duplicate_from_twin(self, block_i):
+    def duplicate_block_from_twin(self, block_i):
         twin_block = self.get_twin_block_by_i(block_i)
         if twin_block is not None:
             new_block = self.blockClass()
@@ -219,6 +209,3 @@ class DuplicateBlockchain(AbstractBlockchain):
 
     def get_twin_block_by_i(self, block_i):
         return self.twin_blockchain.get_block_by_i(block_i)
-
-    def recalculate_block_hashes(self, start_block_i):
-        pass
