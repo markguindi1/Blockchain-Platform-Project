@@ -1,0 +1,4 @@
+cron:
+- description: "clear duplicate blockchains from database"
+  url: /blockchain/rest/clear-duplicates
+  schedule: every day 02:00
